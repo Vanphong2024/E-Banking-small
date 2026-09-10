@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách khách hàng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #198754;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-add:hover {
+            background-color: #157347;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Danh sách khách hàng</h1>
+
+    <a th:href="@{/user/create}" class="btn-add">
+        Thêm khách hàng
+    </a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="user : ${user}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

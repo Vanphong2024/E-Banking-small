@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm khách hàng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            width: 500px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-save {
+            padding: 10px 18px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-save:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 10px 18px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-back:hover {
+            background-color: #5c636a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Thêm khách hàng</h1>
+
+    <form th:action="@{/user/save}"
+          th:object="${user}"
+          method="post">
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text"
+                   id="username"
+                   th:field="*{username}"
+                   placeholder="Nhập username"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email"
+                   id="email"
+                   th:field="*{email}"
+                   placeholder="Nhập email"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password"
+                   id="password"
+                   th:field="*{password}"
+                   placeholder="Nhập password"
+                   required>
+        </div>
+
+        <button type="submit" class="btn-save">
+            Lưu
+        </button>
+
+        <a th:href="@{/user}" class="btn-back">
+            Quay lại
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>
