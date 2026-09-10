@@ -2,7 +2,7 @@ package com.phong.mini_banking.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.annotation.Generated;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +33,12 @@ public class User {
     private LocalDateTime createdAt;
 
 
-
+public void setUserId(Long userId) {
+    this.userId = userId;
+}
+public Long getUserId(){
+    return userId ; 
+}
     // Getter / Setter cho username
     public String getUsername() {
         return username;

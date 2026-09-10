@@ -1,5 +1,4 @@
 package com.phong.mini_banking.controller;
-
 import com.phong.mini_banking.entity.User;
 import com.phong.mini_banking.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -7,8 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -55,13 +52,10 @@ return "user-form";
     }
 
     // Update User
-    @PostMapping("/{id}/update")
+    @PostMapping("/save")
     public String updateUser(
-            @PathVariable Long id,
+          
             @ModelAttribute User user) {
-
-        user.setUserId(id);
-
         userService.updateUser(user);
 
         return "redirect:/users";
