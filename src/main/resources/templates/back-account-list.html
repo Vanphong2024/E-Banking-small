@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Danh sách tài khoản</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/bank-account-list.css}">
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        MY BANK
+    </div>
+
+    <div class="header-right">
+
+        <span>
+            Admin
+        </span>
+
+        <a th:href="@{/logout}"
+           class="logout-button">
+
+            Đăng xuất
+
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="title">
+
+        <h1>
+            Danh sách tài khoản ngân hàng
+        </h1>
+
+        <p>
+            Quản lý tài khoản thanh toán của khách hàng
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Khách hàng</th>
+
+                <th>Số tài khoản</th>
+
+                <th>Loại tài khoản</th>
+
+                <th>Số dư</th>
+
+                <th>Trạng thái</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <tr th:each="account : ${accounts}">
+
+                <td th:text="${account.id}">
+                    1
+                </td>
+
+
+                <td th:text="${account.user.fullName}">
+                    Nguyễn Văn A
+                </td>
+
+
+                <td class="account-number"
+                    th:text="${account.accountNumber}">
+
+                    1234567890
+
+                </td>
+
+
+                <td>
+                    Tài khoản thanh toán
+                </td>
+
+
+                <td>
+
+                    <span th:text="${account.balance}">
+                        0
+                    </span>
+
+                    VNĐ
+
+                </td>
+
+
+                <td>
+
+                    <span class="status">
+                        Đang hoạt động
+                    </span>
+
+                </td>
+
+            </tr>
+
+
+            <tr th:if="${#lists.isEmpty(accounts)}">
+
+                <td colspan="6"
+                    class="empty">
+
+                    Chưa có tài khoản ngân hàng nào.
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <a th:href="@{/admin}"
+       class="back-button">
+
+        QUAY LẠI DASHBOARD
+
+    </a>
+
+</div>
+
+</body>
+</html>

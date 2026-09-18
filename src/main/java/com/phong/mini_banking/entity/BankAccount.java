@@ -23,8 +23,6 @@ public class BankAccount {
 @OneToOne 
    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user; 
-   
-
     @Column(name="account_number", nullable=false , unique=true , length = 20 )
 private String accountNumber; 
  
@@ -41,4 +39,26 @@ private String accountNumber;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    public Long getAccountId() {
+        return accountId;
+    }
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+    public Long setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+        return accountId;
+    }   
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public Long setUser(User user) {
+        this.user = user;
+        return accountId;
+    }
+    public User getUser() {
+        return user;
+    }
 }
+

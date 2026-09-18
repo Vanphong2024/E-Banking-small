@@ -1,8 +1,8 @@
 package com.phong.mini_banking.service;
-
+import java.util.concurrent.ThreadLocalRandom;
 import com.phong.mini_banking.entity.BankAccount;
 import com.phong.mini_banking.repository.BankAccountRepository;
-
+import com.phong.mini_banking.entity.User;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -40,4 +40,22 @@ public class BankAccountService {
     public void deleteBankAccount(Long id) {
         bankAccountRepository.deleteById(id);
     }
+    // 6. sinh số tài khaonr 
+public String gererateAccountNumber(){
+    String accountNumber;
+    do {
+       accountNumber = String.valueOf(
+        ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L));
+       
+    } while (bankAccountRepository.existsByAccountNumber(accountNumber));
+    return accountNumber;
+}
+public BankAccount openAccount(User user){
+String accountNumber = gererateAccountNumber();
+BankAccount bankAccount = new BankAccount();
+bankAccount.setAccountNumber(accountNumber);
+bankAccount.setUser(user);
+return saveBankAccount(bankAccount);
+}
+
 }

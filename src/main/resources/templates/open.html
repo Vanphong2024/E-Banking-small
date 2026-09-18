@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Mở tài khoản thanh toán</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/open-account.css}">
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        MY BANK
+    </div>
+
+    <div class="header-right">
+
+        <span>
+            Admin
+        </span>
+
+        <a th:href="@{/logout}"
+           class="logout-button">
+
+            Đăng xuất
+
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="title">
+
+        <h1>
+            Mở tài khoản thanh toán
+        </h1>
+
+        <p>
+            Tạo tài khoản ngân hàng cho khách hàng
+        </p>
+
+    </div>
+
+
+    <!-- THÔNG TIN KHÁCH HÀNG -->
+
+    <div class="card">
+
+        <h2>
+            Thông tin khách hàng
+        </h2>
+
+
+        <div class="form-group">
+
+            <label>
+                Username
+            </label>
+
+            <input type="text"
+                   th:value="${user.username}"
+                   readonly>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Họ và tên
+            </label>
+
+            <input type="text"
+                   th:value="${user.fullName}"
+                   readonly>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Email
+            </label>
+
+            <input type="text"
+                   th:value="${user.email}"
+                   readonly>
+
+        </div>
+
+    </div>
+
+
+    <!-- THÔNG TIN TÀI KHOẢN -->
+
+    <div class="card">
+
+        <h2>
+            Thông tin tài khoản
+        </h2>
+
+
+        <form th:action="@{/bank-account/open}"
+              method="post">
+
+
+            <input type="hidden"
+                   name="userId"
+                   th:value="${user.id}">
+
+
+            <div class="form-group">
+
+                <label>
+                    Loại tài khoản
+                </label>
+
+                <select name="accountType">
+
+                    <option value="PAYMENT">
+                        Tài khoản thanh toán
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Số dư ban đầu
+                </label>
+
+                <input type="number"
+                       name="balance"
+                       value="0"
+                       min="0">
+
+            </div>
+
+
+            <div class="note">
+
+                <strong>
+                    Lưu ý:
+                </strong>
+
+                Số tài khoản sẽ được hệ thống
+                tự động sinh và đảm bảo không
+                trùng với tài khoản đã tồn tại.
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button type="submit"
+                        class="save-button">
+
+                    MỞ TÀI KHOẢN
+
+                </button>
+
+
+                <a th:href="@{/user}"
+                   class="back-button">
+
+                    QUAY LẠI
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

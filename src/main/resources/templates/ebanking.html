@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>E-Banking</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/ebanking.css}">
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="logo">
+        MY BANK
+    </div>
+
+
+    <div class="user-area">
+
+        <span>
+
+            Xin chào,
+            <strong th:text="${session.user.fullName}">
+                Khách hàng
+            </strong>
+
+        </span>
+
+
+        <a th:href="@{/logout}"
+           class="logout-button">
+
+            Đăng xuất
+
+        </a>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="title">
+
+        <h1>
+            E-Banking
+        </h1>
+
+        <p>
+            Chào mừng bạn đến với ngân hàng điện tử
+        </p>
+
+    </div>
+
+
+    <!-- ACCOUNT -->
+
+    <div class="account-card">
+
+        <div class="account-header">
+
+            <span>
+                TÀI KHOẢN THANH TOÁN
+            </span>
+
+            <span class="status">
+                Đang hoạt động
+            </span>
+
+        </div>
+
+
+        <div class="account-content">
+
+            <p>
+                Số tài khoản
+            </p>
+
+            <h2 th:text="${account.accountNumber}">
+                1234567890
+            </h2>
+
+
+            <p>
+                Số dư khả dụng
+            </p>
+
+            <div class="balance">
+
+                <span th:text="${account.balance}">
+                    10,000,000
+                </span>
+
+                VNĐ
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUICK ACTION -->
+
+    <h2 class="section-title">
+        Dịch vụ ngân hàng
+    </h2>
+
+
+    <div class="service-grid">
+
+        <a href="#"
+           class="service-card">
+
+            <div class="service-icon">
+                💸
+            </div>
+
+            <h3>
+                Chuyển tiền
+            </h3>
+
+            <p>
+                Chuyển tiền đến tài khoản khác
+            </p>
+
+        </a>
+
+
+        <a href="#"
+           class="service-card">
+
+            <div class="service-icon">
+                📜
+            </div>
+
+            <h3>
+                Lịch sử giao dịch
+            </h3>
+
+            <p>
+                Xem các giao dịch của bạn
+            </p>
+
+        </a>
+
+
+        <a href="#"
+           class="service-card">
+
+            <div class="service-icon">
+                👤
+            </div>
+
+            <h3>
+                Thông tin cá nhân
+            </h3>
+
+            <p>
+                Xem thông tin tài khoản
+            </p>
+
+        </a>
+
+
+        <a href="#"
+           class="service-card">
+
+            <div class="service-icon">
+                ⚙
+            </div>
+
+            <h3>
+                Cài đặt
+            </h3>
+
+            <p>
+                Quản lý thiết lập tài khoản
+            </p>
+
+        </a>
+
+    </div>
+
+
+    <!-- ACCOUNT INFORMATION -->
+
+    <div class="information-card">
+
+        <h2>
+            Thông tin tài khoản
+        </h2>
+
+
+        <div class="info-row">
+
+            <span>
+                Chủ tài khoản
+            </span>
+
+            <strong th:text="${session.user.fullName}">
+                Nguyễn Văn A
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Số tài khoản
+            </span>
+
+            <strong th:text="${account.accountNumber}">
+                1234567890
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Loại tài khoản
+            </span>
+
+            <strong>
+                Tài khoản thanh toán
+            </strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Trạng thái
+            </span>
+
+            <strong class="active">
+                Đang hoạt động
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

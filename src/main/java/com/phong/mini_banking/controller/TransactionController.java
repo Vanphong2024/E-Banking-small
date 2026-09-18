@@ -6,14 +6,8 @@ import com.phong.mini_banking.service.TransactionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.phong.mini_banking.service.UserService;
-
 import jakarta.transaction.Transaction;
-
 import org.springframework.web.bind.annotation.*;
-
-
-
-
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
