@@ -30,6 +30,10 @@ public User createUser(User user){
 return userRepository.save (user);
 }
 
+
+
+
+
 //update user 
 public User updateUser(User user){
     String endcodePassword = passwordEncoder.encode(user.getPassword ());

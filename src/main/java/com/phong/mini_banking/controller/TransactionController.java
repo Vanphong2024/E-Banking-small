@@ -38,7 +38,7 @@ public String savetransaction(@ModelAttribute transaction transaction) {
     transactionService.saveTransaction(transaction);
     
     //TODO: process POST request
-    
+  
     return "redirect:/transactions";
 
 }

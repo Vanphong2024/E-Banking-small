@@ -11,7 +11,7 @@
 
     <h1>Thêm khách hàng</h1>
 
-    <form th:action="@{/user/save}"
+    <form 
           th:object="${user}"
           method="post">
     <input type="hidden" th:field="*{userId}">

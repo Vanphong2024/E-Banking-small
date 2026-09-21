@@ -27,8 +27,8 @@
         </thead>
 
         <tbody>
-        <tr th:each="user : ${user}">
-            <td th:text="${user.id}"></td>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.userId}"></td>
             <td th:text="${user.username}"></td>
             <td th:text="${user.email}"></td>
         </tr>

@@ -11,7 +11,6 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -31,9 +30,9 @@ public class UserController {
 
         Optional<User> user = userService.getUsersById(id);
 
-        model.addAttribute("user", user);
+        model.addAttribute("User", user);
 
-        return "user-detail";
+        return "redirect:/user";
     }
 @GetMapping("/create")
 public String showCreateFrom(Model model) {
@@ -41,25 +40,22 @@ model.addAttribute("user",new User());
 return "user-form";
 
 }
-
     // Add User
-    @PostMapping
+    @PostMapping ("/create")
     public String createUser(@ModelAttribute User user) {
-
         userService.createUser(user);
-
-        return "redirect:/users";
+        return "redirect:/user";
     }
 
     // Update User
     @PostMapping("/save")
-    public String updateUser(
-          
+    public String updateUser(     
             @ModelAttribute User user) {
         userService.updateUser(user);
 
-        return "redirect:/users";
+        return "redirect:/user";
     }
+    
 
     // Delete User
     @PostMapping("/{id}/delete")
