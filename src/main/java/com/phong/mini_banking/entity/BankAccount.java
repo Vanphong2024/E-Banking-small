@@ -2,7 +2,7 @@ package com.phong.mini_banking.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+import com.phong.mini_banking.entity.BankAccount;
 import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,17 +45,17 @@ private String accountNumber;
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
-    public Long setAccountNumber(String accountNumber) {
+    public void  setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
-        return accountId;
+       
     }   
     public String getAccountNumber() {
         return accountNumber;
     }
 
-    public Long setUser(User user) {
+    public void setUser(User user) {
         this.user = user;
-        return accountId;
+   
     }
     public User getUser() {
         return user;

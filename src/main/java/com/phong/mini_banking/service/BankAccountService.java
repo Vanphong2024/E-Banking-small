@@ -51,11 +51,18 @@ public String gererateAccountNumber(){
     return accountNumber;
 }
 public BankAccount openAccount(User user){
-String accountNumber = gererateAccountNumber();
+
+    if (bankAccountRepository.existsByUser(user)) {
+        throw new RuntimeException("User đã có tài khoản ngân hàng");
+    }
+    String accountNumber = gererateAccountNumber();
 BankAccount bankAccount = new BankAccount();
 bankAccount.setAccountNumber(accountNumber);
 bankAccount.setUser(user);
+//Đồng bồ quan hệ giữa User và BankAccount
+user.setBankAccount(bankAccount);
 return saveBankAccount(bankAccount);
-}
 
+
+}
 }

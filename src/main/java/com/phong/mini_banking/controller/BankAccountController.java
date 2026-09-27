@@ -74,8 +74,9 @@ public String createBankAccount
         bankAccountService.deleteBankAccount(id);
         return "redirect:/bank-accounts";
 }// gửi yêu cầu tạo tài khoản 
-@PostMapping("/open-account")
-public String openAccount(@PathVariable Long userId){
+@PostMapping("/open-account/{userId}")
+public String openAccount(@PathVariable ("userId") Long userId){
+    System.out.println(">>> OPEN ACCOUNT - userId = " + userId);
     User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
     BankAccount bankAccount = bankAccountService.openAccount(user);
     return "redirect:/user";

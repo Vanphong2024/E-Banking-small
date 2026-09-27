@@ -31,6 +31,22 @@
             <td th:text="${user.userId}"></td>
             <td th:text="${user.username}"></td>
             <td th:text="${user.email}"></td>
+      
+<td>
+
+    <div th:if="${user.bankAccount == null}">
+        <form th:action="@{'/bank-account/open-account/' + ${user.userId}}"
+              method="post"
+               onsubmit="return confirm('Bạn có chắc chắn muốn mở tài khoản cho khách hàng này không?');">
+            <button type="submit">Mở tài khoản</button>
+        </form>
+    </div>
+
+    <div th:if="${user.bankAccount != null}">
+        <span>Đã có tài khoản</span>
+    </div>
+
+</td>
         </tr>
         </tbody>
     </table>

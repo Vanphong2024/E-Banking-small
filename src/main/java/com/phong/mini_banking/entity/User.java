@@ -8,8 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-    import jakarta.persistence.Id;
-    import jakarta.persistence.PrePersist;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 @Entity
 @Table(name="user")
 public class User {
@@ -88,7 +89,16 @@ public Long getUserId(){
         this.createdAt = createdAt;
     }
   
+@OneToOne(mappedBy = "user")
+private BankAccount bankAccount;
 
+public BankAccount getBankAccount() {
+    return bankAccount;
+}
+
+public void setBankAccount(BankAccount bankAccount) {
+    this.bankAccount = bankAccount;
+}
 
     // Tự động tạo thời gian khi User mới được tạo
     @PrePersist
