@@ -53,6 +53,14 @@ private String accountNumber;
         return accountNumber;
     }
 
+    public BigDecimal getBalance() {
+    return balance;
+}
+
+public void setBalance(BigDecimal balance) {
+    this.balance = balance;
+}
+
     public void setUser(User user) {
         this.user = user;
    

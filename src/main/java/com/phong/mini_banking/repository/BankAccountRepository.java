@@ -3,7 +3,7 @@ import com.phong.mini_banking.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.phong.mini_banking.entity.BankAccount;
-
+import java.util.Optional;
 public interface BankAccountRepository extends JpaRepository<BankAccount,Long> {
 
       
@@ -13,5 +13,8 @@ public interface BankAccountRepository extends JpaRepository<BankAccount,Long> {
     boolean existsByUser_UserId(Long userId) ;
    // kiểm tra xem user đã có tài khoản chưa    
    boolean existsByUser(User user);
+
+   // tìm tài khoản ngân hàng theo id của user
+   Optional<BankAccount> findByUser(User user);
 }
 

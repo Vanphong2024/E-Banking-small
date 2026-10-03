@@ -31,15 +31,15 @@ public class BankAccountService {
         return bankAccountRepository.save(bankAccount);
     }
 
-    // 4. Update bank account
-    public BankAccount updateBankAccount(BankAccount bankAccount) {
-        return bankAccountRepository.save(bankAccount);
-    }
+    // // 4. Update bank account
+    // public BankAccount updateBankAccount(BankAccount bankAccount) {
+    //     return bankAccountRepository.save(bankAccount);
+    // }
 
-    // 5. Delete bank account
-    public void deleteBankAccount(Long id) {
-        bankAccountRepository.deleteById(id);
-    }
+    // // 5. Delete bank account
+    // public void deleteBankAccount(Long id) {
+    //     bankAccountRepository.deleteById(id);
+    // }
     // 6. sinh số tài khaonr 
 public String gererateAccountNumber(){
     String accountNumber;
@@ -59,6 +59,7 @@ public BankAccount openAccount(User user){
 BankAccount bankAccount = new BankAccount();
 bankAccount.setAccountNumber(accountNumber);
 bankAccount.setUser(user);
+
 //Đồng bồ quan hệ giữa User và BankAccount
 user.setBankAccount(bankAccount);
 return saveBankAccount(bankAccount);

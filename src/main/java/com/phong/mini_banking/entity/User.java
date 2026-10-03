@@ -1,8 +1,6 @@
 package com.phong.mini_banking.entity;
 
 import java.time.LocalDateTime;
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 @Entity
 @Table(name="user")
 public class User {
@@ -32,8 +32,13 @@ public class User {
 
      @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+@Enumerated(EnumType.STRING)
+private Role role;
 
-
+public Role getRole() {
+    return role;
+}
 public void setUserId(Long userId) {
     this.userId = userId;
 }

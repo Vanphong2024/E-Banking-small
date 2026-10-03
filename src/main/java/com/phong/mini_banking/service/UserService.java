@@ -26,14 +26,29 @@ public UserService(UserRepository userRepository)
         return userRepository.findById(id);
     }
     //add user 
-public User createUser(User user){
-return userRepository.save (user);
+// public User createUser(User user){
+//  String encodedPassword =
+//             passwordEncoder.encode(user.getPassword());
+
+//     user.setPassword(encodedPassword);
+
+//     return userRepository.save(user);
+// }
+public User createUser(User user) {
+
+    System.out.println("PASS NHẬN ĐƯỢC: " + user.getPassword());
+
+    String encodedPassword =
+            passwordEncoder.encode(user.getPassword());
+
+    System.out.println("PASS SAU KHI BCRYPT: " + encodedPassword);
+
+    user.setPassword(encodedPassword);
+
+    System.out.println("PASS TRƯỚC KHI SAVE: " + user.getPassword());
+
+    return userRepository.save(user);
 }
-
-
-
-
-
 //update user 
 public User updateUser(User user){
     String endcodePassword = passwordEncoder.encode(user.getPassword ());
@@ -44,5 +59,16 @@ public User updateUser(User user){
 //delet user 
 public void deleteUser(Long id ){
     userRepository.deleteById(id);
+}
+
+// login user 
+public User login(String mail , String password){
+    User user =userRepository.findByEmail(mail).orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "mail không tồn tại"));
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new IllegalArgumentException("Mật khẩu không đúng");
+    }
+    return user;
 }
 }

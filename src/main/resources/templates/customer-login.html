@@ -24,19 +24,19 @@
             Đăng nhập vào hệ thống E-Banking
         </p>
 
-        <form th:action="@{/login}"
+        <form th:action="@{/customer/login}"
               method="post">
 
             <div class="form-group">
 
                 <label for="username">
-                    Tên đăng nhập
+                   Email
                 </label>
 
                 <input type="text"
-                       id="username"
-                       name="username"
-                       placeholder="Nhập tên đăng nhập"
+                       id="email"
+                       name="email"
+                       placeholder="Nhập email"
                        required>
 
             </div>
@@ -61,7 +61,7 @@
                  class="error-message">
 
                 <span th:text="${error}">
-                    Tên đăng nhập hoặc mật khẩu không đúng
+                    Email hoặc mật khẩu không đúng
                 </span>
 
             </div>

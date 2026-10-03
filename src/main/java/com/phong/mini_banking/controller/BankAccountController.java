@@ -48,32 +48,33 @@ public String createBankAccount
     return "redirect:/bank-accounts"; 
 }
 
-    // 4 . hiển thị from sửa tài khoản 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(
-        @PathVariable Long  id,
-    Model  model ) {
-        BankAccount bankAccount = bankAccountService.getBankAccount(id);
-   model.addAttribute("bankAccount",bankAccount);
+//     // 4 . hiển thị from sửa tài khoản 
+//     @GetMapping("/edit/{id}")
+//     public String showEditForm(
+//         @PathVariable Long  id,
+//     Model  model ) {
+//         BankAccount bankAccount = bankAccountService.getBankAccount(id);
+//    model.addAttribute("bankAccount",bankAccount);
     
-    return "bank-account-from";
-    }
-    // 5 sử lý cập nhật tài khoản 
-    @PostMapping("/edit/{id}")
-    public String updateBankAccount(
-        @PathVariable Long id, 
-    @ModelAttribute ("bankAccount")BankAccount bankAccount) {
-        //TODO: process POST request
+//     return "bank-account-from";
+//     }
+//     // 5 sử lý cập nhật tài khoản 
+//     @PostMapping("/edit/{id}")
+//     public String updateBankAccount(
+//         @PathVariable Long id, 
+//     @ModelAttribute ("bankAccount")BankAccount bankAccount) {
+//         //TODO: process POST request
         
-        return "reditrect:/bank-accounts ";
-    }
-    // 6.xóa tài khoản 
-    @GetMapping("/delete/{id}")
-    public String deleteBankAccount (
-        @PathVariable Long id) {
-        bankAccountService.deleteBankAccount(id);
-        return "redirect:/bank-accounts";
-}// gửi yêu cầu tạo tài khoản 
+//         return "reditrect:/bank-accounts ";
+//     }
+//     // 6.xóa tài khoản 
+//     @GetMapping("/delete/{id}")
+//     public String deleteBankAccount (
+//         @PathVariable Long id) {
+//         bankAccountService.deleteBankAccount(id);
+//         return "redirect:/bank-accounts";
+// }
+// gửi yêu cầu tạo tài khoản 
 @PostMapping("/open-account/{userId}")
 public String openAccount(@PathVariable ("userId") Long userId){
     System.out.println(">>> OPEN ACCOUNT - userId = " + userId);
@@ -82,4 +83,5 @@ public String openAccount(@PathVariable ("userId") Long userId){
     return "redirect:/user";
 
 }
+
 }    
