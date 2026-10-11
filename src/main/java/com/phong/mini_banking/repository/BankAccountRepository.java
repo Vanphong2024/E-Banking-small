@@ -16,5 +16,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount,Long> {
 
    // tìm tài khoản ngân hàng theo id của user
    Optional<BankAccount> findByUser(User user);
+   // tìm tài khoản ngân hàng theo số tk 
+   Optional<BankAccount> findByAccountNumber(String accountNumber);
 }
 

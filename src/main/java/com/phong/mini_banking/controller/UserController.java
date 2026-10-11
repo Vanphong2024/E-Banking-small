@@ -47,22 +47,24 @@ return "user-form";
         return "redirect:/user";
     }
 
-    // Update User
-    @PostMapping("/save")
-    public String updateUser(     
-            @ModelAttribute User user) {
-        userService.updateUser(user);
+    // // Update User
+    // @PostMapping("/save")
+    // public String updateUser(     
+    //         @ModelAttribute User user) {
+    //     userService.updateUser(user);
 
-        return "redirect:/user";
-    }
+    //     return "redirect:/user";
+    // }
     
 
-    // Delete User
-    @PostMapping("/{id}/delete")
-    public String deleteUser(@PathVariable Long id) {
+    // // Delete User
+    // @PostMapping("/{id}/delete")
+    // public String deleteUser(@PathVariable Long id) {
 
-        userService.deleteUser(id);
+    //     userService.deleteUser(id);
 
-        return "redirect:/users";
-    }
+    //     return "redirect:/users";
+    // }
+
+    
 }

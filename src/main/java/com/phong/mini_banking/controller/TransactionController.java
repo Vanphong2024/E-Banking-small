@@ -65,17 +65,9 @@ public String showEditFrom(
             @ModelAttribute transaction transaction) {
  
             transactionService.updateTransaction(transaction);
-
-            //TODO: process PUT request
-            
             return "redirect:/transactions";
         }
-        //Detlet : xóa transaction 
-        @DeleteMapping("/{id}")
-        public String deletTransaction (@PathVariable Long id){
-            transactionService.deleteTransaction(id);
-            return "redirect:/transactions";
-        }
+    
     }
 
 
