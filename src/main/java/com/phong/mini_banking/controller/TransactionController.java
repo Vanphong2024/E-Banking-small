@@ -3,9 +3,14 @@ import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.phong.mini_banking.*;
 import com.phong.mini_banking.entity.transaction;
 import com.phong.mini_banking.service.TransactionService;
+
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.phong.mini_banking.service.UserService;
+import com.phong.mini_banking.entity.User;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transaction;
 import org.springframework.web.bind.annotation.*;
 @Controller
@@ -20,56 +25,51 @@ public TransactionController (TransactionService   transactionService)
 
 }
 //list user 
-@GetMapping
-public String getAllTransaction(Model model){
- model.addAttribute("Transaction",transactionService.getAllTransactions());
- return "Transactions"; 
+@GetMapping("/transfer")
+public String showTransferForm() {
+    return "transfer";
 }
-// find user by id 
 @GetMapping("/{id}")
 public String getTransactionById(
     @PathVariable Long id , Model model){
 transaction transaction = transactionService.getTransactionById(id);
 model.addAttribute("transaction",transaction);
-return "transaction-dentail";    }
+return "transaction-detail";    }
 //Post : thêm trasction 
-@PostMapping 
-public String savetransaction(@ModelAttribute transaction transaction) {
-    transactionService.saveTransaction(transaction);
-    
-    //TODO: process POST request
-  
-    return "redirect:/transactions";
+@PostMapping("/transfer")
+public String transfer(
+        @RequestParam String receiverAccountNumber,
+        @RequestParam BigDecimal amount,
+        HttpSession session,
+        Model model) {
 
-}
-// Get : hiển thị from sửa  transaction 
-@GetMapping("/create")
-public String showCreateFrom (Model model ) {
-   model .addAttribute("transaction",new transaction ());
-    return "trasaction-from";
+    User sender = (User) session.getAttribute("user");
 
-}
-
-//Get: hiển thị from sửa transaction 
-@GetMapping("/edit/{id}")
-public String showEditFrom(
-    @PathVariable Long id,
-    Model model ){
-        transaction transaction = transactionService.getTransactionById(id);
-        model.addAttribute("transaction",transaction);
-        return "trasaction-from";    }
-
-        // Put : cập nhât transaction 
-        @PutMapping("/{id}")
-        public String updateTransaction( 
-            @ModelAttribute transaction transaction) {
- 
-            transactionService.updateTransaction(transaction);
-            return "redirect:/transactions";
-        }
-    
+    if (sender == null) {
+        return "redirect:/customer/login";
     }
 
+    try {
+        transactionService.transferMoney(
+            sender,
+            receiverAccountNumber,
+            amount
+        );
+
+        return "redirect:/transactions/success";
+
+    } catch (IllegalArgumentException e) {
+        model.addAttribute("error", e.getMessage());
+        return "transfer";
+    }
+}
+    @GetMapping("/success")
+    public String ShowSuccessPage(){
+        return "transfer-success";
+    }
+
+
+}
 
 
 

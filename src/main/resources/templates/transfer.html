@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyển tiền - Mini Banking</title>
+
+    <link rel="stylesheet" th:href="@{/css/transfer.css}">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">
+        ◆ MINI BANKING
+    </div>
+
+    <a th:href="@{/ebanking}" class="back-link">
+        ← Trang chủ
+    </a>
+</header>
+
+<main class="container">
+
+    <div class="page-heading">
+        <h1>Chuyển tiền</h1>
+        <p>Quản lý giao dịch của bạn nhanh chóng và thuận tiện</p>
+    </div>
+
+    <div class="dashboard">
+
+        <!-- PHẦN CHUYỂN TIỀN -->
+        <section class="card transfer-card">
+
+            <div class="section-heading">
+                <div class="heading-icon">⇄</div>
+                <div>
+                    <h2>Chuyển khoản</h2>
+                    <p>Nhập thông tin người nhận</p>
+                </div>
+            </div>
+
+            <!-- THÔNG BÁO LỖI -->
+            <div class="error-box" th:if="${error}">
+                <span>⚠</span>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form
+                th:action="@{/transactions/transfer}"
+                method="post">
+
+                <!-- CSRF nếu Spring Security bật CSRF -->
+                <input
+                    th:if="${_csrf != null}"
+                    type="hidden"
+                    th:name="${_csrf.parameterName}"
+                    th:value="${_csrf.token}">
+
+                <div class="form-group">
+                    <label for="receiverAccountNumber">
+                        Số tài khoản người nhận
+                    </label>
+
+                    <input
+                        type="text"
+                        id="receiverAccountNumber"
+                        name="receiverAccountNumber"
+                        placeholder="Nhập số tài khoản"
+                        inputmode="numeric"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">
+                        Số tiền chuyển
+                    </label>
+
+                    <div class="amount-input">
+                        <input
+                            type="number"
+                            id="amount"
+                            name="amount"
+                            placeholder="Nhập số tiền"
+                            min="1"
+                            step="1"
+                            required>
+
+                        <span>VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        Nội dung chuyển khoản
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="3"
+                        maxlength="255"
+                        placeholder="Nhập nội dung chuyển khoản"></textarea>
+                </div>
+
+                <div class="notice">
+                    <span>ⓘ</span>
+                    <p>
+                        Vui lòng kiểm tra thông tin người nhận
+                        và số tiền trước khi xác nhận giao dịch.
+                    </p>
+                </div>
+
+                <button type="submit" class="transfer-btn">
+                    Xác nhận chuyển tiền →
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- LỊCH SỬ GIAO DỊCH -->
+        <section class="card history-card">
+
+            <div class="history-header">
+                <div>
+                    <h2>Lịch sử giao dịch</h2>
+                    <p>Các giao dịch gần đây của bạn</p>
+                </div>
+
+                <span class="history-icon">◷</span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã GD</th>
+                            <th>Loại</th>
+                            <th>Số tiền</th>
+                            <th>Thời gian</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="tx : ${transactions}">
+
+                            <td th:text="${tx.transactionId}">
+                                1
+                            </td>
+
+                            <td>
+                                <span
+                                    class="badge"
+                                    th:classappend="${tx.senderAccount.user.userId == currentUserId}
+                                        ? ' sent' : ' received'"
+                                    th:text="${tx.senderAccount.user.userId == currentUserId}
+                                        ? 'Chuyển đi' : 'Nhận tiền'">
+                                    Chuyển đi
+                                </span>
+                            </td>
+
+                            <td
+                                th:text="${#numbers.formatDecimal(tx.amount, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'">
+                                100.000 VNĐ
+                            </td>
+
+                            <td
+                                th:text="${#temporals.format(tx.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                12/10/2026
+                            </td>
+
+                        </tr>
+
+                        <tr th:if="${transactions == null or #lists.isEmpty(transactions)}">
+                            <td colspan="4" class="empty-history">
+                                Chưa có lịch sử giao dịch
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer>
+    © 2026 Mini Banking
+</footer>
+
+</body>
+</html>

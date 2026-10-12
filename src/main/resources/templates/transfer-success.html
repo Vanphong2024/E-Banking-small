@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Giao dịch thành công - Mini Banking</title>
+
+    <link
+        rel="stylesheet"
+        th:href="@{/css/transfer-success.css}">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        ◆ MINI BANKING
+    </div>
+
+    <a th:href="@{/ebanking}" class="back-link">
+        Trang chủ
+    </a>
+
+</header>
+
+<main class="success-container">
+
+    <div class="success-card" th:if="${transaction != null}">
+
+        <!-- ICON -->
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <!-- TITLE -->
+        <h1>Chuyển tiền thành công!</h1>
+
+        <p class="success-description">
+            Giao dịch của bạn đã được thực hiện thành công
+        </p>
+
+        <!-- AMOUNT -->
+        <div class="amount-section">
+
+            <span>Số tiền đã chuyển</span>
+
+            <h2 th:text="${#numbers.formatDecimal(transaction.amount, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'">
+                100.000 VNĐ
+            </h2>
+
+        </div>
+
+        <!-- TRANSACTION INFORMATION -->
+        <div class="transaction-info">
+
+            <h3>Chi tiết giao dịch</h3>
+
+            <div class="info-row">
+                <span>Mã giao dịch</span>
+
+                <strong th:text="${transaction.transactionId}">
+                    10001
+                </strong>
+            </div>
+
+            <div class="info-row">
+                <span>Tài khoản gửi</span>
+
+                <strong
+                    th:text="${transaction.senderAccount.accountNumber}">
+                    1234567890
+                </strong>
+            </div>
+
+            <div class="info-row">
+                <span>Tài khoản nhận</span>
+
+                <strong
+                    th:text="${transaction.receiverAccount.accountNumber}">
+                    0987654321
+                </strong>
+            </div>
+
+            <div class="info-row">
+                <span>Thời gian</span>
+
+                <strong
+                    th:text="${#temporals.format(transaction.createdAt, 'dd/MM/yyyy HH:mm:ss')}">
+                    12/10/2026 10:30
+                </strong>
+            </div>
+
+            <div class="info-row">
+                <span>Trạng thái</span>
+
+                <strong class="status">
+                    Thành công
+                </strong>
+            </div>
+
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="actions">
+
+            <a
+                th:href="@{/transactions/transfer}"
+                class="history-btn">
+                Xem lịch sử giao dịch
+            </a>
+
+            <a
+                th:href="@{/ebanking}"
+                class="home-btn">
+                Về trang chủ
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="success-card" th:unless="${transaction != null}">
+        <h1>Không có thông tin giao dịch</h1>
+        <p class="success-description">
+            Không thể hiển thị biên lai vì chưa có dữ liệu giao dịch hợp lệ.
+        </p>
+        <div class="actions">
+            <a th:href="@{/transactions/transfer}" class="home-btn">
+                Quay lại chuyển tiền
+            </a>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    © 2026 Mini Banking
+</footer>
+
+</body>
+</html>

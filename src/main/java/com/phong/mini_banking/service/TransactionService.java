@@ -70,6 +70,10 @@ senderAccount.setBalance(senderNewBalance);
 // Cập nhật số dư B
 receiverAccount.setBalance(receiverNewBalance);
 }
-
-
+public transaction getTransactionById(Long id) {
+    return transactionRepository.findById(id)
+            .orElseThrow(() ->
+                new IllegalArgumentException("Không tìm thấy giao dịch")
+            );
+}
 }

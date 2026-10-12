@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f7fc;
+    color: #263449;
+    min-height: 100vh;
+}
+
+/* HEADER */
+
+.header {
+    height: 75px;
+    background: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 8%;
+
+    border-bottom: 1px solid #e4eaf2;
+}
+
+.logo {
+    color: #1761cf;
+    font-weight: 800;
+    font-size: 23px;
+}
+
+.back-link {
+    color: #607086;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    color: #1761cf;
+}
+
+/* SUCCESS CONTAINER */
+
+.success-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 55px 20px;
+}
+
+/* CARD */
+
+.success-card {
+    width: 100%;
+    max-width: 550px;
+
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 35px rgba(20, 50, 95, 0.08);
+}
+
+/* SUCCESS ICON */
+
+.success-icon {
+    width: 85px;
+    height: 85px;
+
+    margin: 0 auto 25px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: #e4f8ed;
+    color: #17a45b;
+
+    font-size: 48px;
+    font-weight: bold;
+}
+
+/* TITLE */
+
+.success-card h1 {
+    color: #173b74;
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.success-description {
+    font-size: 14px;
+    color: #8290a4;
+    line-height: 1.6;
+}
+
+/* AMOUNT */
+
+.amount-section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+    padding: 25px;
+
+    border-radius: 12px;
+    background: #f2f7ff;
+}
+
+.amount-section span {
+    color: #72829a;
+    font-size: 14px;
+}
+
+.amount-section h2 {
+    color: #1761cf;
+    font-size: 32px;
+    margin-top: 12px;
+}
+
+/* TRANSACTION INFO */
+
+.transaction-info {
+    text-align: left;
+
+    border-top: 1px solid #e9eef5;
+
+    padding-top: 25px;
+}
+
+.transaction-info h3 {
+    font-size: 16px;
+    color: #173b74;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #edf1f7;
+}
+
+.info-row span {
+    font-size: 13px;
+    color: #8290a4;
+}
+
+.info-row strong {
+    font-size: 13px;
+    color: #35465f;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.info-row .status {
+    color: #169c58;
+}
+
+/* ACTION BUTTONS */
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.actions a {
+    flex: 1;
+
+    padding: 15px 10px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+    text-align: center;
+
+    font-weight: 600;
+    font-size: 13px;
+
+    transition: 0.2s;
+}
+
+.history-btn {
+    background: #eef4ff;
+    color: #1761cf;
+}
+
+.home-btn {
+    background: #1761cf;
+    color: white;
+}
+
+.history-btn:hover {
+    background: #dfeaff;
+}
+
+.home-btn:hover {
+    background: #0f4fab;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    padding: 25px;
+
+    font-size: 12px;
+    color: #a1acba;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 0 20px;
+    }
+
+    .logo {
+        font-size: 17px;
+    }
+
+    .success-container {
+        padding: 25px 15px;
+    }
+
+    .success-card {
+        padding: 30px 20px;
+    }
+
+    .success-card h1 {
+        font-size: 22px;
+    }
+
+    .amount-section h2 {
+        font-size: 27px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+}
