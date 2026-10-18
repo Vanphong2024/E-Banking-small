@@ -6,7 +6,7 @@ import com.phong.mini_banking.entity.User;
 public interface UserRepository extends JpaRepository <User,Long> {
 // tìm kiếm user theo email 
     Optional<User> findByEmail(String email);
-   // tìm kiếm user theo userid
-    Optional<User> findByUserid(String userid);
+   // tìm kiếm user theo user
+    Optional<User> findByUserId(Long userid);
 
 }

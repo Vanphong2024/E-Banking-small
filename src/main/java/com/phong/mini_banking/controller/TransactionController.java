@@ -38,8 +38,8 @@ return "transaction-detail";    }
 //Post : thêm trasction 
 @PostMapping("/transfer")
 public String transfer(
-        @RequestParam String receiverAccountNumber,
-        @RequestParam BigDecimal amount,
+     @RequestParam("receiverAccountNumber") String receiverAccountNumber,
+        @RequestParam("amount") BigDecimal amount,
         HttpSession session,
         Model model) {
 

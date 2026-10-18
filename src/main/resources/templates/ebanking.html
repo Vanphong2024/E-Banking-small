@@ -95,11 +95,7 @@
 
             <div class="balance">
 
-                <span th:text="${account.balance}">
-                    10,000,000
-                </span>
-
-                VNĐ
+          <strong th:text="${#numbers.formatDecimal(account.balance, 1, 'POINT', 2, 'COMMA')} + ' VNĐ'"></strong>
 
             </div>
 
@@ -117,8 +113,7 @@
 
     <div class="service-grid">
 
-        <a href="#"
-           class="service-card">
+     <a th:href="@{/transactions/transfer}" class="service-card">
 
             <div class="service-icon">
                 💸
