@@ -2,13 +2,15 @@ package com.phong.mini_banking.controller;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.phong.mini_banking.*;
 import com.phong.mini_banking.entity.transaction;
+import com.phong.mini_banking.service.BankAccountService;
 import com.phong.mini_banking.service.TransactionService;
-
+import java.util.List;
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.phong.mini_banking.service.UserService;
+import com.phong.mini_banking.entity.BankAccount;
 import com.phong.mini_banking.entity.User;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transaction;
@@ -16,17 +18,33 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
-    
+    private final BankAccountService bankAccountService;
 private final TransactionService transactionService;
 
-public TransactionController (TransactionService   transactionService)
+public TransactionController (TransactionService   transactionService ,
+     BankAccountService bankAccountService
+    
+)
 {
     this.transactionService =  transactionService;
-
+this.bankAccountService = bankAccountService;
 }
-//list user 
 @GetMapping("/transfer")
-public String showTransferForm() {
+public String showTransferForm(HttpSession session, Model model) {
+    User user = (User) session.getAttribute("user");
+
+    if (user == null) {
+        return "redirect:/customer/login";
+    }
+
+    BankAccount bankAccount = bankAccountService.findByUser(user);
+    List<transaction> transactions =
+            transactionService.getTransactionHistory(bankAccount.getAccountId());
+
+    model.addAttribute("transactions", transactions);
+    model.addAttribute("account", bankAccount);
+    model.addAttribute("currentAccountId", bankAccount.getAccountId());
+
     return "transfer";
 }
 @GetMapping("/{id}")
@@ -68,6 +86,41 @@ public String transfer(
         return "transfer-success";
     }
 
+ 
+@GetMapping("/history")
+public String showHistory(HttpSession session, Model model) {
+
+    User user = (User) session.getAttribute("user");
+
+    if (user == null) {
+        return "redirect:/customer/login";
+    }
+
+    BankAccount bankAccount = bankAccountService.findByUser(user);
+
+    List<transaction> transactions = transactionService.getTransactionHistory(bankAccount.getAccountId());
+ // Kiểm tra dữ liệu backend lấy được
+    System.out.println("Session user ID: " + user.getUserId());
+    System.out.println("Account ID: " + bankAccount.getAccountId());
+    System.out.println("Số giao dịch: " + transactions.size());
+
+    for (transaction item : transactions) {
+        System.out.println(
+                "Giao dịch ID=" + item.getTransactionId()
+                + ", sender=" + item.getSenderAccount().getAccountId()
+                + ", receiver=" + item.getReceiverAccount().getAccountId()
+                + ", amount=" + item.getAmount()
+        
+            );
+            System.out.println("Account ID: " + bankAccount.getAccountId());
+System.out.println("Số giao dịch tìm được: " + transactions.size());
+    }
+model.addAttribute("transactions", transactions);
+model.addAttribute("account", bankAccount);
+model.addAttribute("currentAccountId", bankAccount.getAccountId());
+
+    return "transfer";
+}
 
 }
 

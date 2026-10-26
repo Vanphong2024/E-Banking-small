@@ -95,7 +95,7 @@
 
             <div class="balance">
 
-          <strong th:text="${#numbers.formatDecimal(account.balance, 1, 'POINT', 2, 'COMMA')} + ' VNĐ'"></strong>
+          <strong th:text="${#numbers.formatDecimal(account.balance, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'"></strong>
 
             </div>
 
@@ -130,7 +130,8 @@
         </a>
 
 
-        <a href="#"
+
+        <a th:href="@{/transactions/history#history}"
            class="service-card">
 
             <div class="service-icon">
@@ -247,7 +248,7 @@
         </div>
 
     </div>
-
+a
 </div>
 
 </body>

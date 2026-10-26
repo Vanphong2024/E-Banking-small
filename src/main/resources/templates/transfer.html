@@ -1,57 +1,52 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chuyển tiền - Mini Banking</title>
+
+    <title>Chuyển tiền | Mini Banking</title>
 
     <link rel="stylesheet" th:href="@{/css/transfer.css}">
 </head>
 
 <body>
-
 <header class="header">
-    <div class="logo">
-        ◆ MINI BANKING
-    </div>
+    <a class="brand" th:href="@{/ebanking}">
+        <span class="brand-icon">M</span>
+        <span>Mini<span class="brand-accent">Bank</span></span>
+    </a>
 
-    <a th:href="@{/ebanking}" class="back-link">
-        ← Trang chủ
+    <a class="back-link" th:href="@{/ebanking}">
+        ← Về trang chủ
     </a>
 </header>
 
 <main class="container">
-
     <div class="page-heading">
+        <span class="eyebrow">NGÂN HÀNG TRỰC TUYẾN</span>
         <h1>Chuyển tiền</h1>
-        <p>Quản lý giao dịch của bạn nhanh chóng và thuận tiện</p>
+        <p>Gửi tiền đến tài khoản khác trong hệ thống Mini Banking.</p>
     </div>
 
     <div class="dashboard">
 
-        <!-- PHẦN CHUYỂN TIỀN -->
+        <!-- FORM CHUYỂN TIỀN -->
         <section class="card transfer-card">
-
             <div class="section-heading">
-                <div class="heading-icon">⇄</div>
+                <span class="heading-icon" aria-hidden="true">↗</span>
+
                 <div>
-                    <h2>Chuyển khoản</h2>
-                    <p>Nhập thông tin người nhận</p>
+                    <h2>Tạo giao dịch</h2>
+                    <p>Nhập thông tin người nhận bên dưới</p>
                 </div>
             </div>
 
-            <!-- THÔNG BÁO LỖI -->
-            <div class="error-box" th:if="${error}">
-                <span>⚠</span>
+            <div class="error-box" th:if="${error}" role="alert">
+                <span aria-hidden="true">⚠</span>
                 <span th:text="${error}"></span>
             </div>
 
-            <form
-                th:action="@{/transactions/transfer}"
-                method="post">
-
-                <!-- CSRF nếu Spring Security bật CSRF -->
+            <form th:action="@{/transactions/transfer}" method="post">
                 <input
                     th:if="${_csrf != null}"
                     type="hidden"
@@ -67,22 +62,42 @@
                         type="text"
                         id="receiverAccountNumber"
                         name="receiverAccountNumber"
-                        placeholder="Nhập số tài khoản"
+                        placeholder="Nhập 10 chữ số"
                         inputmode="numeric"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        title="Vui lòng nhập số tài khoản gồm 10 chữ số"
+                        autocomplete="off"
+                        aria-describedby="accountHint"
                         required>
+
+                    <small id="accountHint" class="field-hint">
+                        Nhập đủ 10 chữ số để tra cứu tên người nhận.
+                    </small>
                 </div>
 
                 <div class="form-group">
-                    <label for="amount">
-                        Số tiền chuyển
-                    </label>
+                    <label for="receiverName">Tên người nhận</label>
+
+                    <input
+                        type="text"
+                        id="receiverName"
+                        name="receiverName"
+                        placeholder="Tên người nhận sẽ hiển thị ở đây"
+                        readonly>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <div class="form-group">
+                    <label for="amount">Số tiền chuyển</label>
 
                     <div class="amount-input">
                         <input
                             type="number"
                             id="amount"
                             name="amount"
-                            placeholder="Nhập số tiền"
+                            placeholder="0"
                             min="1"
                             step="1"
                             required>
@@ -94,6 +109,7 @@
                 <div class="form-group">
                     <label for="description">
                         Nội dung chuyển khoản
+                        <span class="optional">Không bắt buộc</span>
                     </label>
 
                     <textarea
@@ -101,100 +117,112 @@
                         name="description"
                         rows="3"
                         maxlength="255"
-                        placeholder="Nhập nội dung chuyển khoản"></textarea>
+                        placeholder="Ví dụ: Thanh toán tiền ăn"></textarea>
                 </div>
 
                 <div class="notice">
-                    <span>ⓘ</span>
+                    <span aria-hidden="true">ⓘ</span>
                     <p>
-                        Vui lòng kiểm tra thông tin người nhận
-                        và số tiền trước khi xác nhận giao dịch.
+                        Kiểm tra đúng tên người nhận và số tiền
+                        trước khi xác nhận chuyển.
                     </p>
                 </div>
 
                 <button type="submit" class="transfer-btn">
-                    Xác nhận chuyển tiền →
+                    <span>Xác nhận chuyển tiền</span>
+                    <span aria-hidden="true">→</span>
                 </button>
-
             </form>
-
         </section>
 
         <!-- LỊCH SỬ GIAO DỊCH -->
         <section class="card history-card">
-
             <div class="history-header">
                 <div>
+                    <span class="eyebrow">HOẠT ĐỘNG TÀI KHOẢN</span>
                     <h2>Lịch sử giao dịch</h2>
-                    <p>Các giao dịch gần đây của bạn</p>
+                    <p>Theo dõi các khoản chuyển đi và nhận vào.</p>
                 </div>
 
-                <span class="history-icon">◷</span>
+                <span class="history-icon" aria-hidden="true">◷</span>
             </div>
 
-            <div class="table-wrapper">
+          <div
+    id="history"
+    class="table-wrapper"
+    role="region"
+    aria-label="Lịch sử giao dịch"
+    tabindex="0">
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Mã GD</th>
-                            <th>Loại</th>
-                            <th>Số tiền</th>
-                            <th>Thời gian</th>
-                        </tr>
-                    </thead>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Mã giao dịch</th>
+                <th scope="col">Loại giao dịch</th>
+                <th scope="col" class="money-column">Số tiền</th>
+                <th scope="col">Thời gian</th>
+            </tr>
+        </thead>
 
                     <tbody>
+                    <tr th:each="tx : ${transactions}">
+                        <td>
+                            <span
+                                class="transaction-id"
+                                th:text="'#' + ${tx.transactionId}">
+                                #1
+                            </span>
+                        </td>
 
-                        <tr th:each="tx : ${transactions}">
+                        <td>
+<span
+    class="badge"
+    th:classappend="${tx.senderAccount.accountId == currentAccountId
+        ? 'sent' : 'received'}"
+    th:text="${tx.senderAccount.accountId == currentAccountId
+        ? '↗ Chuyển đi' : '↙ Nhận tiền'}">
+    ↗ Chuyển đi
+</span>
+                        </td>
 
-                            <td th:text="${tx.transactionId}">
-                                1
-                            </td>
+                        <td
+                            class="money-column transaction-amount"
+                            th:text="${#numbers.formatDecimal(
+                                tx.amount, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'">
+                            100.000 VNĐ
+                        </td>
 
-                            <td>
-                                <span
-                                    class="badge"
-                                    th:classappend="${tx.senderAccount.user.userId == currentUserId}
-                                        ? ' sent' : ' received'"
-                                    th:text="${tx.senderAccount.user.userId == currentUserId}
-                                        ? 'Chuyển đi' : 'Nhận tiền'">
-                                    Chuyển đi
-                                </span>
-                            </td>
+                        <td
+                            class="transaction-time"
+                            th:text="${#temporals.format(
+                                tx.createdAt, 'dd/MM/yyyy HH:mm')}">
+                            22/10/2026 16:00
+                        </td>
+                    </tr>
 
-                            <td
-                                th:text="${#numbers.formatDecimal(tx.amount, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'">
-                                100.000 VNĐ
-                            </td>
-
-                            <td
-                                th:text="${#temporals.format(tx.createdAt, 'dd/MM/yyyy HH:mm')}">
-                                12/10/2026
-                            </td>
-
-                        </tr>
-
-                        <tr th:if="${transactions == null or #lists.isEmpty(transactions)}">
-                            <td colspan="4" class="empty-history">
-                                Chưa có lịch sử giao dịch
-                            </td>
-                        </tr>
-
+                    <tr th:if="${transactions == null or #lists.isEmpty(transactions)}">
+                        <td colspan="4" class="empty-history">
+                            <div class="empty-icon" aria-hidden="true">⇄</div>
+                            <strong>Chưa có giao dịch</strong>
+                            <p>
+                                Các giao dịch của bạn sẽ được hiển thị tại đây.
+                            </p>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-
             </div>
 
+            <div class="history-note">
+                <span class="note-dot" aria-hidden="true"></span>
+                <span>Số tiền được hiển thị bằng Việt Nam đồng.</span>
+            </div>
         </section>
-
     </div>
-
 </main>
 
-<footer>
-    © 2026 Mini Banking
-</footer>
 
+<!-- Chỉ tải file này một lần, sau toàn bộ giao diện -->
+<script th:src="@{/js/transfer.js}"></script>
 </body>
 </html>

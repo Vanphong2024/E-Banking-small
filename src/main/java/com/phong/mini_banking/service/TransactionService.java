@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.math.BigDecimal;
 import java.util.List;
-
+import java.time.LocalDateTime;
 @Service
 public class TransactionService {
 
@@ -67,13 +67,31 @@ BigDecimal receiverNewBalance = receiverAccount.getBalance().add(amount);
 // Cập nhật số dư A
 senderAccount.setBalance(senderNewBalance);
 
+
 // Cập nhật số dư B
 receiverAccount.setBalance(receiverNewBalance);
+// Tạo và lưu bản ghi giao dịch
+transaction transaction = new transaction();
+transaction.setAmount(amount);
+transaction.setSenderAccount(senderAccount);
+transaction.setReceiverAccount(receiverAccount);
+transaction.setCreatedAt(LocalDateTime.now());
+transactionRepository.save(transaction);
+
 }
+
 public transaction getTransactionById(Long id) {
     return transactionRepository.findById(id)
             .orElseThrow(() ->
                 new IllegalArgumentException("Không tìm thấy giao dịch")
             );
 }
+// Lấy danh sách giao dịch của người dùng  
+public List<transaction> getTransactionHistory(Long accountId) {
+    return transactionRepository
+            .findBySenderAccount_AccountIdOrReceiverAccount_AccountIdOrderByCreatedAtDesc(
+                    accountId,
+                    accountId);
+}
+
 }

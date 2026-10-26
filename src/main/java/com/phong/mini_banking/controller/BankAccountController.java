@@ -1,10 +1,14 @@
 package com.phong.mini_banking.controller;
+import java.util.Map;
+
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.phong.mini_banking.entity.BankAccount;
 import com.phong.mini_banking.service.BankAccountService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,32 +52,7 @@ public String createBankAccount
     return "redirect:/bank-accounts"; 
 }
 
-//     // 4 . hiển thị from sửa tài khoản 
-//     @GetMapping("/edit/{id}")
-//     public String showEditForm(
-//         @PathVariable Long  id,
-//     Model  model ) {
-//         BankAccount bankAccount = bankAccountService.getBankAccount(id);
-//    model.addAttribute("bankAccount",bankAccount);
-    
-//     return "bank-account-from";
-//     }
-//     // 5 sử lý cập nhật tài khoản 
-//     @PostMapping("/edit/{id}")
-//     public String updateBankAccount(
-//         @PathVariable Long id, 
-//     @ModelAttribute ("bankAccount")BankAccount bankAccount) {
-//         //TODO: process POST request
-        
-//         return "reditrect:/bank-accounts ";
-//     }
-//     // 6.xóa tài khoản 
-//     @GetMapping("/delete/{id}")
-//     public String deleteBankAccount (
-//         @PathVariable Long id) {
-//         bankAccountService.deleteBankAccount(id);
-//         return "redirect:/bank-accounts";
-// }
+
 // gửi yêu cầu tạo tài khoản 
 @PostMapping("/open-account/{userId}")
 public String openAccount(@PathVariable ("userId") Long userId){
@@ -83,5 +62,14 @@ public String openAccount(@PathVariable ("userId") Long userId){
     return "redirect:/user";
 
 }
+@GetMapping("/receiver-name")
+@ResponseBody
+public Map<String, String> getReceiverName(
+        @RequestParam("accountNumber") String accountNumber) {
 
+    String receiverName =
+            bankAccountService.getReceiverName(accountNumber);
+
+    return Map.of("receiverName", receiverName);
+}
 }    

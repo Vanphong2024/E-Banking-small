@@ -40,7 +40,7 @@ public class BankAccountService {
     // public void deleteBankAccount(Long id) {
     //     bankAccountRepository.deleteById(id);
     // }
-    // 6. sinh số tài khaonr 
+    // 6. sinh số tài khoản 
 public String gererateAccountNumber(){
     String accountNumber;
     do {
@@ -65,5 +65,31 @@ user.setBankAccount(bankAccount);
 return saveBankAccount(bankAccount);
 
 
+}
+// viết hàm lấy id người dùng từ userId
+public Long getReciverName(String accountNumber){
+    // Lấy thông tin tài khoản từ số tài khoản
+    BankAccount account = bankAccountRepository.findByAccountNumber(accountNumber)
+            .orElseThrow(() ->
+                new IllegalArgumentException("Không tìm thấy tài khoản")
+            );
+    return account.getUser().getUserId();
+}
+
+// Tìm tên người nhận theo số tài khoản
+public String getReceiverName(String accountNumber) {
+    BankAccount account = bankAccountRepository
+            .findByAccountNumber(accountNumber)
+            .orElseThrow(() ->
+                    new IllegalArgumentException("Không tìm thấy tài khoản"));
+
+    return account.getUser().getFullName();
+}
+
+public BankAccount findByUser(User user) {
+   return bankAccountRepository.findByUser(user)
+            .orElseThrow(() ->
+                new IllegalArgumentException("Không tìm thấy tài khoản")
+            );
 }
 }

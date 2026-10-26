@@ -19,6 +19,9 @@ public class transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
+     @Column(name = "transaction_id")
+    private Long transactionId;
+
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
@@ -38,4 +41,50 @@ public class transaction {
     
     private BankAccount receiverAccount;
 
-}   
+
+      public Long getTransactionId() {
+        return transactionId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public BankAccount getSenderAccount() {
+        return senderAccount;
+    }
+
+    public void setSenderAccount(BankAccount senderAccount) {
+        this.senderAccount = senderAccount;
+    }
+
+    public BankAccount getReceiverAccount() {
+        return receiverAccount;
+    }
+
+    public void setReceiverAccount(BankAccount receiverAccount) {
+        this.receiverAccount = receiverAccount;
+    }
+  
+ 
+  }   
