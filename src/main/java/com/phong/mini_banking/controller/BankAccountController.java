@@ -33,9 +33,9 @@ public class BankAccountController {
     @GetMapping
     public String getAllBankAccount(Model model) {
 model.addAttribute(
-        "bankAccount",
+        "accounts",
         bankAccountService.getAllBankAccount());
-        return "bank-account-list";
+        return "back-account-list";
     }
 //2: hiển thị fromt thêm tài khoanr 
 @GetMapping("/create")
@@ -49,7 +49,7 @@ public String createBankAccount
 (@ModelAttribute ("bankAccount")BankAccount bankAccount) {
     //TODO: process POST request
     bankAccountService.saveBankAccount(bankAccount);
-    return "redirect:/bank-accounts"; 
+    return "redirect:/bank-account"; 
 }
 
 
@@ -59,7 +59,7 @@ public String openAccount(@PathVariable ("userId") Long userId){
     System.out.println(">>> OPEN ACCOUNT - userId = " + userId);
     User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
     BankAccount bankAccount = bankAccountService.openAccount(user);
-    return "redirect:/user";
+    return "redirect:/staff"; 
 
 }
 @GetMapping("/receiver-name")

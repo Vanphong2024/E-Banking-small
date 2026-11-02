@@ -27,12 +27,10 @@
             Admin
         </span>
 
-        <a th:href="@{/logout}"
-           class="logout-button">
-
-            Đăng xuất
-
-        </a>
+        <form th:action="@{/admin/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="logout-button">Đăng xuất</button>
+        </form>
 
     </div>
 
@@ -176,7 +174,7 @@
                 </button>
 
 
-                <a th:href="@{/user}"
+                <a th:href="@{/staff}"
                    class="back-button">
 
                     QUAY LẠI

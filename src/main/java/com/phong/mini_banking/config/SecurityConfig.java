@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity 
@@ -18,9 +20,14 @@ public class SecurityConfig {
     public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http)
     throws Exception{
         http
-        .securityMatcher("/admin/**", "/user", "/user/**")
+        .securityMatcher("/admin/**", "/staff/**", "/user/**", "/bank-account/**")
         .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/admin/**", "/user", "/user/**").hasRole("ADMIN")
+                .requestMatchers("/admin/login").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/staff/create", "/bank-account/open-account/**")
+                    .hasAuthority("STAFF_CUSTOMER_ACCOUNT")
+                .requestMatchers("/staff/**", "/user/**", "/bank-account/**")
+                    .hasRole("STAFF")
                 .anyRequest().authenticated()
         )
         .formLogin(form -> form
@@ -28,9 +35,25 @@ public class SecurityConfig {
                 .loginProcessingUrl("/admin/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/user", true)
+                .successHandler((request, response, authentication) -> {
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                            .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
+                    response.sendRedirect(request.getContextPath()
+                            + (isAdmin ? "/admin/dashboard" : "/staff"));
+                })
                 .permitAll()
         )
+        .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
+                (request, response, exception) -> {
+                    if (exception instanceof InvalidCsrfTokenException
+                            && request.getRequestURI().equals(
+                                    request.getContextPath() + "/admin/staff/create")) {
+                        response.sendRedirect(request.getContextPath()
+                                + "/admin/staff/create?csrfError");
+                        return;
+                    }
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                }))
                 .logout(logout -> logout
                 .logoutUrl("/admin/logout")
                 .logoutSuccessUrl("/admin/login?logout")
@@ -57,4 +80,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

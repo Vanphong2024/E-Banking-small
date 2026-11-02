@@ -82,5 +82,12 @@ public String customerLogin(
 
         return "customer-login";
     }
-}
+
+    }
+
+    @GetMapping("/customer/logout")
+    public String customerLogout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/customer/login?logout";
+    }
 }

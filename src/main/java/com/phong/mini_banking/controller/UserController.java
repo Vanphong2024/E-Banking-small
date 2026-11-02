@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/staff")
 public class UserController {
     private final UserService userService;
 
@@ -21,7 +21,7 @@ public class UserController {
     @GetMapping
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "users";
+        return "staff";
     }
 
     // Find User theo ID
@@ -32,19 +32,19 @@ public class UserController {
 
         model.addAttribute("User", user);
 
-        return "redirect:/user";
+        return "redirect:/staff";
     }
 @GetMapping("/create")
 public String showCreateFrom(Model model) {
 model.addAttribute("user",new User());
-return "user-form";
+return "staff-form";
 
 }
     // Add User
     @PostMapping ("/create")
     public String createUser(@ModelAttribute User user) {
         userService.createUser(user);
-        return "redirect:/user";
+        return "redirect:/staff";
     }
 
     // // Update User

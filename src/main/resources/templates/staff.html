@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khách hàng | Mini Banking</title>
+    <link rel="stylesheet" th:href="@{/css/staff.css}">
+</head>
+<body>
+<main class="staff-page">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">M</div>
+            <div>
+                <h1>Mini Banking</h1>
+                <span>Staff workspace</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <span class="role-badge">STAFF</span>
+            <form th:action="@{/admin/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-logout">Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">CUSTOMER MANAGEMENT</p>
+            <h2>Quản lý khách hàng</h2>
+            <p>Đăng ký khách hàng và mở tài khoản ngân hàng từ một màn hình.</p>
+        </div>
+        <a th:href="@{/staff/create}" class="btn btn-primary">
+            <span aria-hidden="true">+</span> Thêm khách hàng
+        </a>
+    </section>
+
+    <section class="summary-row">
+        <div class="summary-card">
+            <div class="summary-icon" aria-hidden="true">👥</div>
+            <div>
+                <span>Tổng khách hàng</span>
+                <strong th:text="${#lists.size(users)}">0</strong>
+            </div>
+        </div>
+        <div>
+            <p class="summary-note">Cập nhật trực tiếp từ dữ liệu hệ thống</p>
+        </div>
+    </section>
+
+    <section class="table-card">
+        <div class="table-heading">
+            <div>
+                <h3>Danh sách khách hàng</h3>
+                <p>Kiểm tra trạng thái và mở tài khoản cho khách hàng chưa có tài khoản.</p>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Trạng thái tài khoản</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td class="id-cell" th:text="${user.userId}"></td>
+                    <td class="name-cell" th:text="${user.username}"></td>
+                    <td th:text="${user.fullName}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td>
+                        <span class="status status-active" th:if="${user.bankAccount != null}">
+                            Đã mở
+                        </span>
+                        <span class="status status-pending" th:if="${user.bankAccount == null}">
+                            Chưa mở
+                        </span>
+                    </td>
+                    <td>
+                        <div th:if="${user.bankAccount == null}">
+                            <form th:action="@{'/bank-account/open-account/' + ${user.userId}}"
+                                  method="post"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn mở tài khoản cho khách hàng này không?');">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-small">Mở tài khoản</button>
+                            </form>
+                        </div>
+                        <span class="complete-label" th:if="${user.bankAccount != null}">Đã hoàn tất</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="6" class="empty-state">
+                        Chưa có khách hàng trong hệ thống.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

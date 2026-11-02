@@ -36,6 +36,9 @@ public class Admin {
     @Column(name = "status", nullable = false)
     private String status = "ACTIVE";
 
+    @Column(name = "can_manage_customer_accounts", nullable = false)
+    private boolean canManageCustomerAccounts = false;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -55,5 +58,39 @@ public class Admin {
         return status;
     }
 
-    // Getter và Setter
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isCanManageCustomerAccounts() {
+        return canManageCustomerAccounts;
+    }
+
+    public void setCanManageCustomerAccounts(boolean canManageCustomerAccounts) {
+        this.canManageCustomerAccounts = canManageCustomerAccounts;
+    }
 }

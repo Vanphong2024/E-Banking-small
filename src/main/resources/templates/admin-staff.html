@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Staff</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="staff-management-page">
+<main class="staff-management">
+    <div class="staff-management-header">
+        <div>
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <h1>Quản lý Staff</h1>
+            <p>Chỉ Staff được Admin cấp quyền mới đăng nhập và quản lý tài khoản khách hàng.</p>
+        </div>
+        <div class="staff-header-actions">
+            <a th:href="@{/admin/staff/create}" class="btn-primary">+ Tạo tài khoản Staff</a>
+            <form th:action="@{/admin/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Quyền tài khoản khách hàng</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member : ${staff}">
+            <td th:text="${member.adminId}"></td>
+            <td th:text="${member.fullName}"></td>
+            <td th:text="${member.email}"></td>
+            <td th:text="${member.status}"></td>
+            <td>
+                <form th:action="@{'/admin/staff/' + ${member.adminId} + '/toggle-customer-account-permission'}"
+                      method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit"
+                            th:text="${member.canManageCustomerAccounts ? 'Đã cấp quyền' : 'Cấp quyền'}">
+                        Cấp quyền
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{'/admin/staff/' + ${member.adminId} + '/toggle-status'}"
+                      method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit"
+                            th:text="${member.status == 'ACTIVE' ? 'Khóa Staff' : 'Mở khóa Staff'}">
+                        Khóa Staff
+                    </button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(staff)}">
+            <td colspan="6">Chưa có Staff.</td>
+        </tr>
+        </tbody>
+    </table>
+    <p class="staff-count">Tổng số Staff trong danh sách: <strong th:text="${#lists.size(staff)}">0</strong></p>
+</main>
+</body>
+</html>
