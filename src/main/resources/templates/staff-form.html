@@ -10,6 +10,7 @@
 <div class="container">
 
     <h1>Thêm khách hàng</h1>
+    <p th:if="${error}" th:text="${error}" role="alert"></p>
 
     <form th:action="@{/staff/create}"
           th:object="${user}"

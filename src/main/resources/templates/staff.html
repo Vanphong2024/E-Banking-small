@@ -30,12 +30,15 @@
         <div>
             <p class="eyebrow">CUSTOMER MANAGEMENT</p>
             <h2>Quản lý khách hàng</h2>
-            <p>Đăng ký khách hàng và mở tài khoản ngân hàng từ một màn hình.</p>
+            <p>Quản lý khách hàng, nạp tiền và khóa hoặc mở khóa tài khoản ngân hàng.</p>
         </div>
         <a th:href="@{/staff/create}" class="btn btn-primary">
             <span aria-hidden="true">+</span> Thêm khách hàng
         </a>
     </section>
+
+    <p th:if="${success}" th:text="${success}" class="staff-notice notice-success auto-hide-notice" role="status"></p>
+    <p th:if="${error}" th:text="${error}" class="staff-notice notice-error" role="alert"></p>
 
     <section class="summary-row">
         <div class="summary-card">
@@ -58,6 +61,22 @@
             </div>
         </div>
 
+        <div class="customer-toolbar" id="customer-tools" hidden>
+            <div class="customer-search">
+                <label for="customer-search">Tìm khách hàng</label>
+                <input id="customer-search" type="search" placeholder="Tên, email, tên đăng nhập, số tài khoản hoặc ID" autocomplete="off">
+            </div>
+            <div>
+                <label for="customer-status">Trạng thái tài khoản</label>
+                <select id="customer-status">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="ACTIVE">Đã mở</option>
+                    <option value="LOCKED">Đã khóa</option>
+                    <option value="PENDING">Chưa mở</option>
+                </select>
+            </div>
+        </div>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -66,45 +85,92 @@
                     <th>Tên đăng nhập</th>
                     <th>Họ tên</th>
                     <th>Email</th>
+                    <th>Tài khoản / Số dư</th>
                     <th>Trạng thái tài khoản</th>
                     <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="user : ${users}">
+                <tr th:each="user : ${users}" class="customer-row"
+                    th:attr="data-status=${user.bankAccount == null ? 'PENDING' : (user.bankAccount.status == 'ACTIVE' ? 'ACTIVE' : 'LOCKED')}">
                     <td class="id-cell" th:text="${user.userId}"></td>
                     <td class="name-cell" th:text="${user.username}"></td>
                     <td th:text="${user.fullName}"></td>
                     <td th:text="${user.email}"></td>
                     <td>
-                        <span class="status status-active" th:if="${user.bankAccount != null}">
+                        <div th:if="${user.bankAccount != null}" class="account-balance">
+                            <strong th:text="${user.bankAccount.accountNumber}"></strong>
+                            <span th:text="${#numbers.formatDecimal(user.bankAccount.balance, 1, 'POINT', 0, 'COMMA')} + ' VNĐ'"></span>
+                        </div>
+                        <span th:if="${user.bankAccount == null}">—</span>
+                    </td>
+                    <td>
+                        <span class="status status-active" th:if="${user.bankAccount != null and user.bankAccount.status == 'ACTIVE'}">
                             Đã mở
                         </span>
+                        <span class="status status-locked" th:if="${user.bankAccount != null and user.bankAccount.status != 'ACTIVE'}">Đã khóa</span>
                         <span class="status status-pending" th:if="${user.bankAccount == null}">
                             Chưa mở
                         </span>
                     </td>
                     <td>
-                        <div th:if="${user.bankAccount == null}">
+                        <div th:if="${user.bankAccount == null or user.role == null}">
                             <form th:action="@{'/bank-account/open-account/' + ${user.userId}}"
                                   method="post"
                                   onsubmit="return confirm('Bạn có chắc chắn muốn mở tài khoản cho khách hàng này không?');">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button type="submit" class="btn btn-small">Mở tài khoản</button>
+                                <button type="submit" class="btn btn-small"
+                                        th:text="${user.bankAccount == null ? 'Mở tài khoản' : 'Kích hoạt đăng nhập'}">Mở tài khoản</button>
                             </form>
                         </div>
-                        <span class="complete-label" th:if="${user.bankAccount != null}">Đã hoàn tất</span>
+                        <div th:if="${user.bankAccount != null and user.role != null}" class="account-actions">
+                            <details th:if="${user.bankAccount.status == 'ACTIVE'}" class="deposit-panel">
+                                <summary class="btn btn-small">Nạp tiền</summary>
+                                <form th:action="@{'/staff/accounts/' + ${user.bankAccount.accountId} + '/deposit'}"
+                                      method="post" class="deposit-form" th:attr="data-customer=${user.fullName}">
+                                    <input type="hidden" name="requestId" th:value="${depositRequestIds[user.bankAccount.accountId]}">
+                                    <label th:for="'deposit-' + ${user.bankAccount.accountId}">Số tiền nạp (VNĐ)</label>
+                                    <input type="text" th:id="'deposit-' + ${user.bankAccount.accountId}" name="amount"
+                                           inputmode="numeric" pattern="[0-9.]*" required
+                                           placeholder="Ví dụ: 100.000" autocomplete="off"
+                                           oninput="formatVndInput(this)"
+                                           onkeyup="formatVndInput(this)"
+                                           onchange="formatVndInput(this)">
+                                    <small>Chỉ xác nhận sau khi đã nhận đủ tiền tại quầy.</small>
+                                    <button type="submit" class="btn btn-small">Xác nhận nạp</button>
+                                </form>
+                            </details>
+                            <form th:action="@{'/staff/accounts/' + ${user.bankAccount.accountId} + '/status'}" method="post"
+                                  onsubmit="return confirm('Xác nhận thay đổi trạng thái tài khoản khách hàng?');">
+                                <input type="hidden" name="status" th:value="${user.bankAccount.status == 'ACTIVE' ? 'LOCKED' : 'ACTIVE'}">
+                                <button type="submit" class="btn btn-small"
+                                        th:classappend="${user.bankAccount.status == 'ACTIVE' ? 'btn-lock' : 'btn-unlock'}"
+                                        th:text="${user.bankAccount.status == 'ACTIVE' ? 'Khóa tài khoản' : 'Mở khóa'}">Khóa tài khoản</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(users)}">
-                    <td colspan="6" class="empty-state">
+                    <td colspan="7" class="empty-state">
                         Chưa có khách hàng trong hệ thống.
                     </td>
+                </tr>
+                <tr id="customer-no-results" hidden>
+                    <td colspan="7" class="empty-state">Không tìm thấy khách hàng phù hợp. Hãy thử từ khóa hoặc trạng thái khác.</td>
                 </tr>
                 </tbody>
             </table>
         </div>
+        <div class="customer-pagination" id="customer-pagination" hidden>
+            <p id="customer-result-count" role="status" aria-live="polite"></p>
+            <nav aria-label="Phân trang khách hàng">
+                <button type="button" class="btn btn-logout" id="customer-prev">Trước</button>
+                <span id="customer-page"></span>
+                <button type="button" class="btn btn-logout" id="customer-next">Sau</button>
+            </nav>
+        </div>
     </section>
 </main>
+<script th:src="@{/js/staff.js(v=5)}"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.phong.mini_banking.controller;
 import com.phong.mini_banking.entity.User;
+import com.phong.mini_banking.entity.Role;
 import com.phong.mini_banking.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +21,15 @@ public class UserController {
     // List User
     @GetMapping
     public String getAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        var users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        java.util.Map<Long, String> depositRequestIds = new java.util.HashMap<>();
+        for (User user : users) {
+            if (user.getBankAccount() != null) {
+                depositRequestIds.put(user.getBankAccount().getAccountId(), java.util.UUID.randomUUID().toString());
+            }
+        }
+        model.addAttribute("depositRequestIds", depositRequestIds);
         return "staff";
     }
 
@@ -42,9 +51,16 @@ return "staff-form";
 }
     // Add User
     @PostMapping ("/create")
-    public String createUser(@ModelAttribute User user) {
+    public String createUser(@ModelAttribute User user, Model model) {
+        user.setRole(Role.CUSTOMER);
+        try {
         userService.createUser(user);
         return "redirect:/staff";
+        } catch (IllegalArgumentException exception) {
+            user.setPassword("");
+            model.addAttribute("error", exception.getMessage());
+            return "staff-form";
+        }
     }
 
     // // Update User

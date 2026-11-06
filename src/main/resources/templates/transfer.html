@@ -180,10 +180,10 @@
                         <td>
 <span
     class="badge"
-    th:classappend="${tx.senderAccount.accountId == currentAccountId
+    th:classappend="${tx.senderAccount != null and tx.senderAccount.accountId == currentAccountId
         ? 'sent' : 'received'}"
-    th:text="${tx.senderAccount.accountId == currentAccountId
-        ? '↗ Chuyển đi' : '↙ Nhận tiền'}">
+    th:text="${tx.senderAccount == null ? '↓ Nạp tiền tại quầy' :
+        (tx.senderAccount.accountId == currentAccountId ? '↗ Chuyển đi' : '↙ Nhận tiền')}">
     ↗ Chuyển đi
 </span>
                         </td>
@@ -227,5 +227,6 @@
 
 <!-- Chỉ tải file này một lần, sau toàn bộ giao diện -->
 <script th:src="@{/js/transfer.js}"></script>
+<script th:src="@{/js/customer-session.js}" th:data-status-url="@{/customer/session-status}" th:data-login-url="@{/customer/login}" defer></script>
 </body>
 </html>

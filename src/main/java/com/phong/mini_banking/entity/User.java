@@ -39,6 +39,9 @@ private Role role;
 public Role getRole() {
     return role;
 }
+public void setRole(Role role) {
+    this.role = role;
+}
 public void setUserId(Long userId) {
     this.userId = userId;
 }

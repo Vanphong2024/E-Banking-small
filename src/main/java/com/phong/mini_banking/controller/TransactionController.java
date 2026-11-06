@@ -15,6 +15,7 @@ import com.phong.mini_banking.entity.User;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transaction;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -59,7 +60,7 @@ public String transfer(
      @RequestParam("receiverAccountNumber") String receiverAccountNumber,
         @RequestParam("amount") BigDecimal amount,
         HttpSession session,
-        Model model) {
+        RedirectAttributes flash) {
 
     User sender = (User) session.getAttribute("user");
 
@@ -77,8 +78,11 @@ public String transfer(
         return "redirect:/transactions/success";
 
     } catch (IllegalArgumentException e) {
-        model.addAttribute("error", e.getMessage());
-        return "transfer";
+        flash.addFlashAttribute("error", e.getMessage());
+        return "redirect:/transactions/transfer";
+    } catch (org.springframework.dao.DataAccessException e) {
+        flash.addFlashAttribute("error", "Tài khoản vừa được cập nhật. Vui lòng kiểm tra lịch sử và thử lại.");
+        return "redirect:/transactions/transfer";
     }
 }
     @GetMapping("/success")
@@ -104,17 +108,6 @@ public String showHistory(HttpSession session, Model model) {
     System.out.println("Account ID: " + bankAccount.getAccountId());
     System.out.println("Số giao dịch: " + transactions.size());
 
-    for (transaction item : transactions) {
-        System.out.println(
-                "Giao dịch ID=" + item.getTransactionId()
-                + ", sender=" + item.getSenderAccount().getAccountId()
-                + ", receiver=" + item.getReceiverAccount().getAccountId()
-                + ", amount=" + item.getAmount()
-        
-            );
-            System.out.println("Account ID: " + bankAccount.getAccountId());
-System.out.println("Số giao dịch tìm được: " + transactions.size());
-    }
 model.addAttribute("transactions", transactions);
 model.addAttribute("account", bankAccount);
 model.addAttribute("currentAccountId", bankAccount.getAccountId());

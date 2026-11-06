@@ -9,6 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
+import org.springframework.security.web.csrf.CsrfException;
+import org.springframework.security.authorization.AuthorizationManagers;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
@@ -24,6 +27,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/admin/login").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/staff/accounts/**").access(AuthorizationManagers.allOf(
+                    AuthorityAuthorizationManager.hasRole("STAFF"),
+                    AuthorityAuthorizationManager.hasAuthority("STAFF_CUSTOMER_ACCOUNT")))
                 .requestMatchers("/staff/create", "/bank-account/open-account/**")
                     .hasAuthority("STAFF_CUSTOMER_ACCOUNT")
                 .requestMatchers("/staff/**", "/user/**", "/bank-account/**")
@@ -70,6 +76,20 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
             .anyRequest().permitAll()
+        ).exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
+            (request, response, exception) -> {
+                String path = request.getServletPath();
+                if (exception instanceof CsrfException
+                        && "POST".equals(request.getMethod())
+                        && ("/customer/login".equals(path)
+                            || "/login".equals(path)
+                            || "/customer-login".equals(path))) {
+                    response.sendRedirect(request.getContextPath()
+                            + "/customer/login?sessionExpired");
+                    return;
+                }
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            })
         );
 
         return http.build();

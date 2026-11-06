@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Version;
 @Entity
 @Table(name = "bank_accounts")
 public class BankAccount {
@@ -19,6 +20,10 @@ public class BankAccount {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
       @Column(name = "account_id")
       private Long accountId;
+
+    @Version
+    @Column(nullable = false)
+    private long version;
 
 @OneToOne 
    @JoinColumn(name = "user_id", nullable = false, unique = true)

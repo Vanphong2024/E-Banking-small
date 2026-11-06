@@ -3,6 +3,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.phong.mini_banking.entity.BankAccount;
 import com.phong.mini_banking.repository.BankAccountRepository;
 import com.phong.mini_banking.entity.User;
+import com.phong.mini_banking.entity.Role;
+import com.phong.mini_banking.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,9 +14,11 @@ import org.springframework.stereotype.Service;
 public class BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
+    private final UserRepository userRepository;
 
-    public BankAccountService(BankAccountRepository bankAccountRepository) {
+    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository) {
         this.bankAccountRepository = bankAccountRepository;
+        this.userRepository = userRepository;
     }
 
     // 1. Find bank account by ID
@@ -50,10 +55,20 @@ public String gererateAccountNumber(){
     } while (bankAccountRepository.existsByAccountNumber(accountNumber));
     return accountNumber;
 }
+@Transactional
 public BankAccount openAccount(User user){
 
-    if (bankAccountRepository.existsByUser(user)) {
-        throw new RuntimeException("User đã có tài khoản ngân hàng");
+    if (user.getRole() != null && user.getRole() != Role.CUSTOMER) {
+        throw new IllegalArgumentException("Chỉ được mở tài khoản cho khách hàng.");
+    }
+    if (user.getRole() == null) {
+        user.setRole(Role.CUSTOMER);
+        userRepository.save(user);
+    }
+
+    var existingAccount = bankAccountRepository.findByUser(user);
+    if (existingAccount.isPresent()) {
+        return existingAccount.get();
     }
     String accountNumber = gererateAccountNumber();
 BankAccount bankAccount = new BankAccount();

@@ -21,21 +21,30 @@
         <h1>Đăng nhập</h1>
 
         <p class="login-description">
-            Đăng nhập vào hệ thống E-Banking
+            Đăng nhập E-Banking dành cho khách hàng
         </p>
 
+        <p th:if="${param.accountLocked}" class="error-message" role="alert">
+            Tài khoản chưa hoạt động hoặc đã bị khóa. Vui lòng liên hệ nhân viên.
+        </p>
+        <p th:if="${param.sessionReplaced}" class="error-message" role="alert">
+            Tài khoản của bạn đã đăng nhập trên thiết bị khác. Bạn đã bị đăng xuất khỏi thiết bị này.
+        </p>
+
+        <p th:if="${param.sessionExpired}" class="error-message" role="alert">Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</p>
         <form th:action="@{/customer/login}"
               method="post">
 
             <div class="form-group">
 
-                <label for="username">
+                <label for="email">
                    Email
                 </label>
 
-                <input type="text"
+                <input type="email"
                        id="email"
                        name="email"
+                       autocomplete="username"
                        placeholder="Nhập email"
                        required>
 
@@ -51,6 +60,7 @@
                 <input type="password"
                        id="password"
                        name="password"
+                       autocomplete="current-password"
                        placeholder="Nhập mật khẩu"
                        required>
 

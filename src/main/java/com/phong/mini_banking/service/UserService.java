@@ -2,6 +2,7 @@ package com.phong.mini_banking.service;
 import com.phong.mini_banking.entity.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.Locale;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,29 +26,17 @@ public UserService(UserRepository userRepository)
     public Optional<User> getUsersById(Long id){
         return userRepository.findById(id);
     }
-    //add user 
-// public User createUser(User user){
-//  String encodedPassword =
-//             passwordEncoder.encode(user.getPassword());
 
-//     user.setPassword(encodedPassword);
-
-//     return userRepository.save(user);
-// }
 public User createUser(User user) {
-
-    System.out.println("PASS NHẬN ĐƯỢC: " + user.getPassword());
-
-    String encodedPassword =
-            passwordEncoder.encode(user.getPassword());
-
-    System.out.println("PASS SAU KHI BCRYPT: " + encodedPassword);
-
-    user.setPassword(encodedPassword);
-
-    System.out.println("PASS TRƯỚC KHI SAVE: " + user.getPassword());
-
-    return userRepository.save(user);
+ String email = normalizeEmail(user.getEmail());
+ if (userRepository.findByNormalizedEmail(email).isPresent()) {
+     throw new IllegalArgumentException("Email khách hàng đã tồn tại.");
+ }
+ user.setEmail(email);
+ user.setRole(Role.CUSTOMER);
+ String encodedPassword =passwordEncoder.encode(user.getPassword());
+user.setPassword(encodedPassword);
+return userRepository.save(user);
 }
 //update user 
 public User updateUser(User user){
@@ -63,12 +52,19 @@ public void deleteUser(Long id ){
 
 // login user 
 public User login(String mail , String password){
-    User user =userRepository.findByEmail(mail).orElseThrow(() ->
+    User user =userRepository.findByNormalizedEmail(normalizeEmail(mail)).orElseThrow(() ->
                         new IllegalArgumentException(
                                 "mail không tồn tại"));
     if (!passwordEncoder.matches(password, user.getPassword())) {
         throw new IllegalArgumentException("Mật khẩu không đúng");
     }
     return user;
+}
+
+private String normalizeEmail(String email) {
+    if (email == null || email.strip().isEmpty()) {
+        throw new IllegalArgumentException("Vui lòng nhập email khách hàng.");
+    }
+    return email.strip().toLowerCase(Locale.ROOT);
 }
 }

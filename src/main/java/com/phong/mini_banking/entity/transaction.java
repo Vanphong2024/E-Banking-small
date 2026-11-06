@@ -31,9 +31,20 @@ public class transaction {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "deposit_request_id", unique = true, length = 36)
+    private String depositRequestId;
+
+    @Column(name = "performed_by", length = 255)
+    private String performedBy;
+
+    public String getDepositRequestId() { return depositRequestId; }
+    public void setDepositRequestId(String depositRequestId) { this.depositRequestId = depositRequestId; }
+    public String getPerformedBy() { return performedBy; }
+    public void setPerformedBy(String performedBy) { this.performedBy = performedBy; }
+
     // senders and recives 
     @ManyToOne
-    @JoinColumn(name = "sender_account_id")
+    @JoinColumn(name = "sender_account_id", nullable = true)
     private BankAccount senderAccount;
 
     @ManyToOne

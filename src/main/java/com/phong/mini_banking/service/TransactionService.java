@@ -5,7 +5,7 @@ import com.phong.mini_banking.repository.TransactionRepository;
 import com.phong.mini_banking.repository.BankAccountRepository;
 import com.phong.mini_banking.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,51 +32,56 @@ public class TransactionService {
         this.userRepository = userRepository;
     }
 // chức năng chuyển tiền 
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public void transferMoney(User sender, String receiverAccountNumber, BigDecimal amount) {
-    // lấy thông tin người gửi từ userId 
-    if(amount==null || amount.stripTrailingZeros().scale() > 0){
+    if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
+            || amount.stripTrailingZeros().scale() > 0
+            || amount.compareTo(new BigDecimal("9999999999999.99")) > 0) {
         throw new IllegalArgumentException("Số tiền chuyển phải lớn hơn 0");
     }
-// tài khoản người gửi A 
-  BankAccount senderAccount = bankAcccountRepository.findByUser(sender)
+
+    BankAccount senderReference = bankAcccountRepository.findByUser(sender)
         .orElseThrow(() ->
             new IllegalArgumentException("Không tìm thấy tài khoản A")
         );
-        if (amount== null || amount.compareTo(BigDecimal.ZERO)<=0){
-            throw new IllegalArgumentException("số tiền phải lớn hơn 0 ");
-        }
-// tài khoàn của người b 
-BankAccount receiverAccount = bankAcccountRepository
+
+    BankAccount receiverReference = bankAcccountRepository
         .findByAccountNumber(receiverAccountNumber)
         .orElseThrow(() ->
             new IllegalArgumentException("Không tìm thấy tài khoản B")
         );
  
-        if (senderAccount.getAccountId().equals(receiverAccount.getAccountId())) {
+        if (senderReference.getAccountId().equals(receiverReference.getAccountId())) {
             throw new IllegalArgumentException("Không thể chuyển tiền cho chính mình");
         }
-// kiểm tra số dư của người gủi 
-if (senderAccount.getBalance().compareTo(amount) < 0) {
-    throw new IllegalArgumentException("Số dư tài khoản không đủ để thực hiện giao dịch");
-}
-// từ tài khoản a 
-BigDecimal senderNewBalance = senderAccount.getBalance().subtract(amount);
-//cộng tiền vào tài khoản b
-BigDecimal receiverNewBalance = receiverAccount.getBalance().add(amount);
-// Cập nhật số dư A
-senderAccount.setBalance(senderNewBalance);
+    Long firstId = Math.min(senderReference.getAccountId(), receiverReference.getAccountId());
+    Long secondId = Math.max(senderReference.getAccountId(), receiverReference.getAccountId());
+    BankAccount first = bankAcccountRepository.findLockedById(firstId).orElseThrow();
+    BankAccount second = bankAcccountRepository.findLockedById(secondId).orElseThrow();
+    BankAccount senderAccount = senderReference.getAccountId().equals(firstId) ? first : second;
+    BankAccount receiverAccount = receiverReference.getAccountId().equals(firstId) ? first : second;
+    if (!"ACTIVE".equals(senderAccount.getStatus()) || !"ACTIVE".equals(receiverAccount.getStatus())) {
+        throw new IllegalArgumentException("Tài khoản gửi hoặc nhận đang bị khóa, không thể giao dịch.");
+    }
+    if (receiverAccount.getBalance().add(amount).compareTo(new BigDecimal("9999999999999.99")) > 0) {
+        throw new IllegalArgumentException("Số dư tài khoản nhận vượt hạn mức.");
+    }
+    if (senderAccount.getBalance().compareTo(amount) < 0) {
+        throw new IllegalArgumentException("Số dư tài khoản không đủ để thực hiện giao dịch");
+    }
 
+    senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
+    receiverAccount.setBalance(receiverAccount.getBalance().add(amount));
 
-// Cập nhật số dư B
-receiverAccount.setBalance(receiverNewBalance);
-// Tạo và lưu bản ghi giao dịch
-transaction transaction = new transaction();
-transaction.setAmount(amount);
-transaction.setSenderAccount(senderAccount);
-transaction.setReceiverAccount(receiverAccount);
-transaction.setCreatedAt(LocalDateTime.now());
-transactionRepository.save(transaction);
+    bankAcccountRepository.save(senderAccount);
+    bankAcccountRepository.save(receiverAccount);
+
+    transaction transaction = new transaction();
+    transaction.setAmount(amount);
+    transaction.setSenderAccount(senderAccount);
+    transaction.setReceiverAccount(receiverAccount);
+    transaction.setCreatedAt(LocalDateTime.now());
+    transactionRepository.save(transaction);
 
 }
 

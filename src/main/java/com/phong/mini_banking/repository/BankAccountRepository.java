@@ -6,17 +6,17 @@ import com.phong.mini_banking.entity.BankAccount;
 import java.util.Optional;
 public interface BankAccountRepository extends JpaRepository<BankAccount,Long> {
 
+   @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+   @org.springframework.data.jpa.repository.Query("select a from BankAccount a where a.accountId = :id")
+   Optional<BankAccount> findLockedById(@org.springframework.data.repository.query.Param("id") Long id);
+
       
     // hàm sinh xố ngần nhiên cho tài khoản
     boolean existsByAccountNumber(String accountNumber) ;
    // kiểm tra xem user đã có tài khoản chưa 
     boolean existsByUser_UserId(Long userId) ;
-   // kiểm tra xem user đã có tài khoản chưa    
-   boolean existsByUser(User user);
-
    // tìm tài khoản ngân hàng theo id của user
    Optional<BankAccount> findByUser(User user);
    // tìm tài khoản ngân hàng theo số tk 
    Optional<BankAccount> findByAccountNumber(String accountNumber);
 }
-
