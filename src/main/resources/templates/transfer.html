@@ -16,12 +16,18 @@
         <span>Mini<span class="brand-accent">Bank</span></span>
     </a>
 
-    <a class="back-link" th:href="@{/ebanking}">
-        ← Về trang chủ
-    </a>
-    <a class="back-link" th:href="@{/customer/logout}">
-        Đăng xuất
-    </a>
+    <div class="header-actions">
+        <a class="back-link" th:href="@{/ebanking}">
+            ← Về trang chủ
+        </a>
+        <form th:action="@{/customer/logout}" method="post">
+            <input type="hidden"
+                   th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <button class="back-link" type="submit">Đăng xuất</button>
+        </form>
+    </div>
 </header>
 
 <main class="container">
@@ -226,7 +232,7 @@
 
 
 <!-- Chỉ tải file này một lần, sau toàn bộ giao diện -->
-<script th:src="@{/js/transfer.js}"></script>
+<script th:src="@{/js/transfer.js?v=2}"></script>
 <script th:src="@{/js/customer-session.js}" th:data-status-url="@{/customer/session-status}" th:data-login-url="@{/customer/login}" defer></script>
 </body>
 </html>

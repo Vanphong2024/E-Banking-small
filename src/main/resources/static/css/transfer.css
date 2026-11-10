@@ -96,6 +96,16 @@ textarea {
     color: #065f46;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-actions form {
+    margin: 0;
+}
+
 /* Khung nội dung */
 main,
 .container,

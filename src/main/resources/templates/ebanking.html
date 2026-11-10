@@ -27,19 +27,20 @@
         <span>
 
             Xin chào,
-            <strong th:text="${session.user.fullName}">
+            <strong th:text="${user.fullName}">
                 Khách hàng
             </strong>
 
         </span>
 
 
-        <a th:href="@{/customer/logout}"
-           class="logout-button">
-
-            Đăng xuất
-
-        </a>
+        <form th:action="@{/customer/logout}" method="post">
+            <input type="hidden"
+                   th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <button type="submit" class="logout-button">Đăng xuất</button>
+        </form>
 
     </div>
 
@@ -149,7 +150,7 @@
         </a>
 
 
-        <a href="#"
+        <a th:href="@{/customer/profile}"
            class="service-card">
 
             <div class="service-icon">
@@ -189,7 +190,7 @@
 
     <!-- ACCOUNT INFORMATION -->
 
-    <div class="information-card">
+    <div id="account-information" class="information-card">
 
         <h2>
             Thông tin tài khoản
@@ -202,7 +203,7 @@
                 Chủ tài khoản
             </span>
 
-            <strong th:text="${session.user.fullName}">
+            <strong th:text="${user.fullName}">
                 Nguyễn Văn A
             </strong>
 
@@ -252,5 +253,13 @@
 </div>
 
 <script th:src="@{/js/customer-session.js}" th:data-status-url="@{/customer/session-status}" th:data-login-url="@{/customer/login}" defer></script>
+<script th:if="${param.section != null and param.section[0] == 'account-information'}">
+    window.addEventListener('load', function () {
+        var accountInformation = document.getElementById('account-information');
+        if (accountInformation) {
+            accountInformation.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+</script>
 </body>
 </html>

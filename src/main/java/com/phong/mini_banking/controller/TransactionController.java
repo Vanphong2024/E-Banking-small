@@ -6,37 +6,38 @@ import com.phong.mini_banking.service.BankAccountService;
 import com.phong.mini_banking.service.TransactionService;
 import java.util.List;
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.phong.mini_banking.service.UserService;
 import com.phong.mini_banking.entity.BankAccount;
 import com.phong.mini_banking.entity.User;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transaction;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+import com.phong.mini_banking.service.CurrentCustomerService;
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
     private final BankAccountService bankAccountService;
 private final TransactionService transactionService;
+private final CurrentCustomerService currentCustomer;
 
 public TransactionController (TransactionService   transactionService ,
-     BankAccountService bankAccountService
+     BankAccountService bankAccountService,
+     CurrentCustomerService currentCustomer
     
 )
 {
     this.transactionService =  transactionService;
-this.bankAccountService = bankAccountService;
-}
-@GetMapping("/transfer")
-public String showTransferForm(HttpSession session, Model model) {
-    User user = (User) session.getAttribute("user");
-
-    if (user == null) {
-        return "redirect:/customer/login";
+    this.bankAccountService = bankAccountService;
+    this.currentCustomer = currentCustomer;
     }
+    @GetMapping("/transfer")
+    public String showTransferForm(Authentication authentication, Model model) {
+        User user = currentCustomer.getCustomer(authentication);
 
     BankAccount bankAccount = bankAccountService.findByUser(user);
     List<transaction> transactions =
@@ -48,6 +49,14 @@ public String showTransferForm(HttpSession session, Model model) {
 
     return "transfer";
 }
+
+@GetMapping("/receiver-name")
+@ResponseBody
+public Map<String, String> getReceiverName(
+        @RequestParam("accountNumber") String accountNumber) {
+    return Map.of("receiverName", bankAccountService.getReceiverName(accountNumber));
+}
+
 @GetMapping("/{id}")
 public String getTransactionById(
     @PathVariable Long id , Model model){
@@ -59,14 +68,10 @@ return "transaction-detail";    }
 public String transfer(
      @RequestParam("receiverAccountNumber") String receiverAccountNumber,
         @RequestParam("amount") BigDecimal amount,
-        HttpSession session,
+        Authentication authentication,
         RedirectAttributes flash) {
 
-    User sender = (User) session.getAttribute("user");
-
-    if (sender == null) {
-        return "redirect:/customer/login";
-    }
+    User sender = currentCustomer.getCustomer(authentication);
 
     try {
         transactionService.transferMoney(
@@ -92,13 +97,8 @@ public String transfer(
 
  
 @GetMapping("/history")
-public String showHistory(HttpSession session, Model model) {
-
-    User user = (User) session.getAttribute("user");
-
-    if (user == null) {
-        return "redirect:/customer/login";
-    }
+public String showHistory(Authentication authentication, Model model) {
+    User user = currentCustomer.getCustomer(authentication);
 
     BankAccount bankAccount = bankAccountService.findByUser(user);
 
@@ -116,8 +116,6 @@ model.addAttribute("currentAccountId", bankAccount.getAccountId());
 }
 
 }
-
-
 
 
 

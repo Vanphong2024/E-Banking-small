@@ -32,8 +32,15 @@
         </p>
 
         <p th:if="${param.sessionExpired}" class="error-message" role="alert">Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</p>
+        <p th:if="${param.error}" class="error-message" role="alert">
+            Email hoặc mật khẩu không đúng, hoặc tài khoản ngân hàng chưa hoạt động.
+        </p>
         <form th:action="@{/customer/login}"
               method="post">
+            <input type="hidden"
+                   th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
 
             <div class="form-group">
 

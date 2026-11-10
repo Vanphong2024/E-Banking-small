@@ -8,19 +8,45 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import jakarta.servlet.http.HttpServletResponse;
+import com.phong.mini_banking.service.Adminservice;
+import com.phong.mini_banking.service.CustomerUserDetailsService;
 
 @Configuration
 @EnableWebSecurity 
 public class SecurityConfig {
+    @Bean
+    public AuthenticationProvider adminAuthenticationProvider(
+            Adminservice adminService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(adminService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationProvider customerAuthenticationProvider(
+            CustomerUserDetailsService customerService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customerService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
     
     @Bean 
     @Order(1)
-    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http)
+    public SecurityFilterChain adminSecurityFilterChain(
+            HttpSecurity http,
+            @Qualifier("adminAuthenticationProvider")
+            AuthenticationProvider adminAuthenticationProvider)
     throws Exception{
         http
         .securityMatcher("/admin/**", "/staff/**", "/user/**", "/bank-account/**")
@@ -49,6 +75,7 @@ public class SecurityConfig {
                 })
                 .permitAll()
         )
+        .authenticationProvider(adminAuthenticationProvider)
         .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
                 (request, response, exception) -> {
                     if (exception instanceof InvalidCsrfTokenException
@@ -69,16 +96,43 @@ public class SecurityConfig {
         }
 @Bean 
 @Order(2)
-   
+public SecurityFilterChain customerSecurity(
+        HttpSecurity http,
+        @Qualifier("customerAuthenticationProvider")
+    AuthenticationProvider customerAuthenticationProvider)
+        throws Exception {
 
-    public SecurityFilterChain customerSecurity(HttpSecurity http)
-            throws Exception {
-
-        http.authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll()
-        ).exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
-            (request, response, exception) -> {
-                String path = request.getServletPath();
+    http
+    .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/customer/login", "/login", "/customer-login",
+                "/css/**", "/js/**", "/images/**").permitAll()
+        .requestMatchers("/ebanking", "/transactions/**", "/customer/profile").hasRole("CUSTOMER")
+        .anyRequest().permitAll()
+    )
+    .formLogin(form -> form
+        .loginPage("/customer/login")
+        .loginProcessingUrl("/customer/login")
+        .usernameParameter("email")
+        .passwordParameter("password")
+        .defaultSuccessUrl("/ebanking", true)
+        .failureUrl("/customer/login?error")
+        .permitAll()
+    )
+    .logout(logout -> logout
+        .logoutUrl("/customer/logout")
+        .logoutSuccessUrl("/customer/login?logout")
+        .invalidateHttpSession(true)
+        .clearAuthentication(true)
+        .permitAll()
+    )
+    .authenticationProvider(customerAuthenticationProvider)
+    .sessionManagement(session -> session
+        .maximumSessions(1)
+        .maxSessionsPreventsLogin(false)
+        .expiredUrl("/customer/login?sessionReplaced"))
+    .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
+        (request, response, exception) -> {
+            String path = request.getServletPath();
                 if (exception instanceof CsrfException
                         && "POST".equals(request.getMethod())
                         && ("/customer/login".equals(path)
@@ -98,5 +152,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 }

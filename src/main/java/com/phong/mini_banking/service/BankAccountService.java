@@ -93,10 +93,19 @@ public Long getReciverName(String accountNumber){
 
 // Tìm tên người nhận theo số tài khoản
 public String getReceiverName(String accountNumber) {
+    if (accountNumber == null || accountNumber.isBlank()) {
+        throw new IllegalArgumentException("Số tài khoản người nhận không hợp lệ");
+    }
+
     BankAccount account = bankAccountRepository
-            .findByAccountNumber(accountNumber)
+            .findByAccountNumber(accountNumber.trim())
             .orElseThrow(() ->
                     new IllegalArgumentException("Không tìm thấy tài khoản"));
+
+    if (account.getUser() == null || account.getUser().getFullName() == null
+            || account.getUser().getFullName().isBlank()) {
+        throw new IllegalArgumentException("Tài khoản người nhận chưa có thông tin chủ tài khoản");
+    }
 
     return account.getUser().getFullName();
 }

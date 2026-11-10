@@ -1,29 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
-// Lấy các phần tử input từ DOM
-const accountInput = document.getElementById("receiverAccountNumber");
-// Lấy các phần tử input từ DOM
-const receiverName = document.getElementById("receiverName");
-//bắt sự kiện khi người dùng nhập số tài khoản
-accountInput.addEventListener("input", function() {
+    const accountInput = document.getElementById("receiverAccountNumber");
+    const receiverName = document.getElementById("receiverName");
 
-    const accountNumber = accountInput.value.trim();
-// bắt đầu kiểm tra 
-    if (accountNumber.length === 10) {
-    // Gửi yêu cầu AJAX để lấy tên người nhận từ server
-    fetch(`/bank-account/receiver-name?accountNumber=${accountNumber}`)
-        .then(response => response.json())
-        .then(data => {
-            // Cập nhật tên người nhận vào input receiverName
-            receiverName.value = data.receiverName;
-        })
-        .catch(error => {
-            console.error("Lỗi khi lấy tên người nhận:", error);
-            receiverName.value = ""; // Xóa giá trị nếu có lỗi
-        });
-} else {
-    receiverName.value = ""; // Xóa giá trị nếu số tài khoản không hợp lệ
-}
-    console.log(accountNumber);
+    accountInput.addEventListener("input", function () {
+        const accountNumber = accountInput.value.trim();
 
-});
+        if (accountNumber.length !== 10) {
+            receiverName.value = "";
+            return;
+        }
+
+        receiverName.value = "Đang tra cứu...";
+
+        fetch(`/transactions/receiver-name?accountNumber=${encodeURIComponent(accountNumber)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Tra cứu người nhận thất bại (${response.status})`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (typeof data.receiverName !== "string" || data.receiverName.trim() === "") {
+                    throw new Error("Phản hồi không có tên người nhận");
+                }
+                receiverName.value = data.receiverName;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy tên người nhận:", error);
+                receiverName.value = error.message.includes("(404)")
+                    ? "Không tìm thấy tài khoản"
+                    : "Không thể tra cứu người nhận";
+            });
+    });
 });

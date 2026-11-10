@@ -16,7 +16,13 @@
 
     <span class="secure-label">
         <span class="secure-dot"></span>
-        <a th:href="@{/customer/logout}">Đăng xuất</a>
+        <form th:action="@{/customer/logout}" method="post">
+            <input type="hidden"
+                   th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <button type="submit">Đăng xuất</button>
+        </form>
     </span>
 </header>
 

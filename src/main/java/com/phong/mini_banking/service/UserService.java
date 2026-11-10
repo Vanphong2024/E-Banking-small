@@ -3,7 +3,7 @@ import com.phong.mini_banking.entity.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Locale;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.phong.mini_banking.repository.UserRepository;
@@ -11,12 +11,11 @@ import com.phong.mini_banking.repository.UserRepository;
 @Service 
 public class UserService {  
 private final UserRepository userRepository; 
-private final BCryptPasswordEncoder passwordEncoder =
-        new BCryptPasswordEncoder();
-public UserService(UserRepository userRepository)
+private final PasswordEncoder passwordEncoder;
+public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder)
 {
     this.userRepository = userRepository;
-
+    this.passwordEncoder = passwordEncoder;
 }
  // list  user
  public List<User> getAllUsers(){
@@ -48,17 +47,6 @@ public User updateUser(User user){
 //delet user 
 public void deleteUser(Long id ){
     userRepository.deleteById(id);
-}
-
-// login user 
-public User login(String mail , String password){
-    User user =userRepository.findByNormalizedEmail(normalizeEmail(mail)).orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "mail không tồn tại"));
-    if (!passwordEncoder.matches(password, user.getPassword())) {
-        throw new IllegalArgumentException("Mật khẩu không đúng");
-    }
-    return user;
 }
 
 private String normalizeEmail(String email) {
