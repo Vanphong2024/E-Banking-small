@@ -51,7 +51,7 @@ public class StaffAccountService {
             throw new IllegalArgumentException("Số dư sau khi nạp vượt hạn mức lưu trữ.");
         }
         account.setBalance(newBalance);
-        accounts.save(account);
+        accounts.saveAndFlush(account);
         transaction deposit = new transaction();
         deposit.setAmount(amount);
         deposit.setReceiverAccount(account);
@@ -72,7 +72,7 @@ public class StaffAccountService {
         if (status.equals(account.getStatus())) { return; }
         statusChanges.save(new AccountStatusChange(account, account.getStatus(), status, staffEmail));
         account.setStatus(status);
-        accounts.save(account);
+        accounts.saveAndFlush(account);
     }
 
     private BankAccount lockedCustomerAccount(Long id) {

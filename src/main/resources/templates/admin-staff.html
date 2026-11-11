@@ -21,6 +21,11 @@
             </form>
         </div>
     </div>
+    <p th:if="${success}" th:text="${success}" role="status"></p>
+    <p th:if="${error}" th:text="${error}" role="alert"></p>
+    <p th:if="${param.csrfError}" role="alert">
+        Phiên làm việc đã hết hạn hoặc biểu mẫu đã cũ. Vui lòng tải lại trang rồi thử lại.
+    </p>
 
     <table>
         <thead>

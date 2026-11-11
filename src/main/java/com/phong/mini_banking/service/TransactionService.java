@@ -73,8 +73,8 @@ public void transferMoney(User sender, String receiverAccountNumber, BigDecimal 
     senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
     receiverAccount.setBalance(receiverAccount.getBalance().add(amount));
 
-    bankAcccountRepository.save(senderAccount);
-    bankAcccountRepository.save(receiverAccount);
+    bankAcccountRepository.saveAndFlush(senderAccount);
+    bankAcccountRepository.saveAndFlush(receiverAccount);
 
     transaction transaction = new transaction();
     transaction.setAmount(amount);

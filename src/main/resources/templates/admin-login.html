@@ -31,6 +31,14 @@
                 hoặc tài khoản đã bị vô hiệu hóa.
             </div>
 
+            <div class="error-message" th:if="${param.accountLocked}" role="alert">
+                Tài khoản Staff của bạn đã bị khóa. Vui lòng liên hệ Admin để được mở khóa.
+            </div>
+
+            <div class="error-message" th:if="${param.sessionExpired}" role="alert">
+                Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để tiếp tục.
+            </div>
+
             <!-- Thông báo đăng xuất thành công -->
             <div class="success-message" th:if="${param.logout}">
                 Bạn đã đăng xuất thành công.
@@ -38,6 +46,7 @@
 
             <!-- Form đăng nhập -->
             <form th:action="@{/admin/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
                 <div class="form-group">
                     <label for="email">Email</label>

@@ -62,7 +62,7 @@ private final Adminrepository adminRepository;
                 .filter(account -> account.getRole() == Role.STAFF)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Staff"));
         staff.setStatus("ACTIVE".equals(staff.getStatus()) ? "LOCKED" : "ACTIVE");
-        return adminRepository.save(staff);
+        return adminRepository.saveAndFlush(staff);
     }
 
     public Admin toggleCustomerAccountPermission(Long staffId) {
@@ -70,7 +70,7 @@ private final Adminrepository adminRepository;
                 .filter(account -> account.getRole() == Role.STAFF)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Staff"));
         staff.setCanManageCustomerAccounts(!staff.isCanManageCustomerAccounts());
-        return adminRepository.save(staff);
+        return adminRepository.saveAndFlush(staff);
     }
 
     // Thêm các phương thức để quản lý Admin nếu cần thiết

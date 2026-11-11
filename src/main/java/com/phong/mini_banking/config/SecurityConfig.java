@@ -15,10 +15,13 @@ import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import jakarta.servlet.http.HttpServletResponse;
 import com.phong.mini_banking.service.Adminservice;
 import com.phong.mini_banking.service.CustomerUserDetailsService;
+import com.phong.mini_banking.repository.Adminrepository;
+import com.phong.mini_banking.entity.Role;
 
 @Configuration
 @EnableWebSecurity 
@@ -46,7 +49,8 @@ public class SecurityConfig {
     public SecurityFilterChain adminSecurityFilterChain(
             HttpSecurity http,
             @Qualifier("adminAuthenticationProvider")
-            AuthenticationProvider adminAuthenticationProvider)
+            AuthenticationProvider adminAuthenticationProvider,
+            Adminrepository adminRepository)
     throws Exception{
         http
         .securityMatcher("/admin/**", "/staff/**", "/user/**", "/bank-account/**")
@@ -73,20 +77,34 @@ public class SecurityConfig {
                     response.sendRedirect(request.getContextPath()
                             + (isAdmin ? "/admin/dashboard" : "/staff"));
                 })
+                .failureHandler((request, response, exception) -> {
+                    String email = request.getParameter("email");
+                    boolean lockedStaff = email != null
+                            && adminRepository.findByEmail(email.trim())
+                                    .filter(admin -> admin.getRole() == Role.STAFF)
+                                    .map(admin -> "LOCKED".equals(admin.getStatus()))
+                                    .orElse(false);
+                    String reason = lockedStaff ? "?accountLocked" : "?error";
+                    response.sendRedirect(request.getContextPath() + "/admin/login" + reason);
+                })
                 .permitAll()
         )
         .authenticationProvider(adminAuthenticationProvider)
         .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(
                 (request, response, exception) -> {
                     if (exception instanceof InvalidCsrfTokenException
-                            && request.getRequestURI().equals(
-                                    request.getContextPath() + "/admin/staff/create")) {
-                        response.sendRedirect(request.getContextPath()
-                                + "/admin/staff/create?csrfError");
-                        return;
-                    }
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                }))
+                    && request.getRequestURI().startsWith(
+                            request.getContextPath() + "/admin/staff")) {
+                if (request.getSession(false) != null) {
+                    request.getSession(false).invalidate();
+                }
+                SecurityContextHolder.clearContext();
+                response.sendRedirect(request.getContextPath()
+                        + "/admin/login?sessionExpired");
+                return;
+            }
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }))
                 .logout(logout -> logout
                 .logoutUrl("/admin/logout")
                 .logoutSuccessUrl("/admin/login?logout")
